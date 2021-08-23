@@ -5,6 +5,8 @@
  */
 package com.proyecto1;
 
+import java.io.File;
+
 /**
  *
  * @author Jose Andres Flores Barco 
@@ -17,6 +19,14 @@ public class main {
      */
     public static void main(String[] args) {
         System.out.println("Sirve");
+        String ruta = "/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/Lexer.flex";
+        generarLexer(ruta);
+        
+    }
+    
+    public static void generarLexer(String ruta) {
+        File archivo = new File(ruta);
+        JFlex.Main.generate(archivo);
     }
     
 }
