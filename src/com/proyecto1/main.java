@@ -6,6 +6,7 @@
 package com.proyecto1;
 
 import java.io.File;
+import com.proyecto1.view.EditorTexto;
 
 /**
  *
@@ -17,10 +18,13 @@ public class main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        System.out.println("Sirve");
+    public static void main(String[] args) {   
         String ruta = "/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/Lexer.flex";
         generarLexer(ruta);
+        
+        EditorTexto editorTexto = new EditorTexto();
+        editorTexto.setVisible(true);
+        
         
     }
     
