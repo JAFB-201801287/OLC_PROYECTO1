@@ -6,7 +6,8 @@
 package com.proyecto1;
 
 import java.io.File;
-import com.proyecto1.view.EditorTexto;
+import com.proyecto1.compiler.analyzer.EditorTexto;
+import java.util.Formatter;
 
 /**
  *
@@ -24,8 +25,7 @@ public class main {
         
         EditorTexto editorTexto = new EditorTexto();
         editorTexto.setVisible(true);
-        
-        
+       
     }
     
     public static void generarLexer(String ruta) {

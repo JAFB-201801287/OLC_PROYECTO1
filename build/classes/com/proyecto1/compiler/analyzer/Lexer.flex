@@ -5,26 +5,19 @@ import static com.proyecto1.compiler.analyzer.Tokens.*;
 %type Tokens
 
 /* CONSTANTES */
-/*-------------------------------------------------------------------------------------------------------------*/
-
-/*CADENAS DE TEXTO */
-L=[a-zA-Z_]+
-
-/* NUMEROS DE UNO O MAS DIGITOS ENTEROS*/
-D=[0-9]+
-
-/* ESPACIOS */
-espacio=[ ,\t,\r]+
+L = [a-zA-Z_]+
+D = [0-9]+
+espacio = [ ,\t,\r]+
 
 %{
     public String lexeme;
 %}
 %%
 
-/* EXPRESIONES REGULARES */
-/*-------------------------------------------------------------------------------------------------------------*/
+/* COMENTARIO MULTILINEA */
+( #\*(.|\n)*\*# ) {/*Ignore*/}
 
-/* ESPACIOS EN BLANCOS */
+/* ESPACIOS EN BLANCO */
 {espacio} {/*Ignore*/}
 
 /* COMENTARIOS */
@@ -33,116 +26,94 @@ espacio=[ ,\t,\r]+
 /* SALTO DE LINEA */
 ( "\n" ) {return Linea;}
 
-/* IDENTIFICADOR O NOMBRE DE VARIABLE */
-{L}({L}|{D})* {lexeme=yytext(); return Identificador;}
-
-/* NUMEROS DECIMALES */
-( {D}\.{D} ) {lexeme=yytext(); return Decimal;}
-
-/* CADENAS DE TEXTO ENCERRADA CON COMILLAS */
-( \".*\" ) {lexeme=yytext(); return CadenaTexto;}
-
-/* CADENAS DE TEXTO ENCERRADA CON COMILLA */
-( '.*' ) {lexeme=yytext(); return CadenaTextoComilla;}
-
-/* ERROR */
- . {return ERROR;}
-
-/* SIMBOLOS */
-/*-------------------------------------------------------------------------------------------------------------*/
-
-/* COMILLAS */
-( "\"" ) {lexeme=yytext(); return Comillas;}
-
-/* COMILLA SIMPLE */
-( "'" ) {lexeme=yytext(); return ComillaSimple;}
-
-/* COMA */
-( "," ) {lexeme=yytext(); return Coma;}
-
-/* PUNTO */
-( "." ) {lexeme=yytext(); return Punto;}
-
-// LLAVE DE APERTURA
-( "{" ) {lexema=yytext(); return LlaveApertura;}
-
-// LLAVE DE CIERRE
-( "}" ) {lexema=yytext(); return LlaveCierre;}
-
-// PARENTESIS DE APERTURA
-( "(" ) {lexema=yytext(); return ParentesisApertura;}
-
-// PARENTESIS DE CIERRE
-( ")" ) {lexema=yytext(); return ParentesisCierre;}
-
-/* CORCHETE DE APERTURA */
-( "[" ) {lexeme = yytext(); return CorcheteApertura;}
-
-/* CORCHETE DE CIERRE */
-( "]" ) {lexeme = yytext(); return CorcheteCierre;}
-
-// PUNTO Y COMA
-( ";" ) {lexema=yytext(); return PuntoComa;}
-
-// DOS PUNTOS
-( ":" ) {lexema=yytext(); return DosPuntos;}
+/* TIPOS DE DATOS */
+( [S|s][T|t][R|r][I|i][N|n][G|g] | [D|d][O|o][U|u][B|b][L|l][E|e] ) {lexeme=yytext(); return TipoDato;}
 
 /* IGUAL */
 ( "=" ) {lexeme=yytext(); return Igual;}
 
-/* MENOR QUE */
-( "<" ) {lexeme=yytext(); return MenorQue;}
+/* PARENTESIS INICIO */
+( "(" ) {lexeme=yytext(); return ParentesisInicio;}
 
-/* MAYOR QUE */
-( ">" ) {lexeme=yytext(); return MayorQue;}
+/* PARENTESIS FINAL */
+( ")" ) {lexeme=yytext(); return ParentesisFinal;}
+
+/* LLAVE INICIO */
+( "{" ) {lexeme=yytext(); return LlaveInicio;}
+
+/* LLAVE FINAL*/
+( "}" ) {lexeme=yytext(); return LlaveFinal;}
+
+/* CORCHETE INICIO */
+( "[" ) {lexeme = yytext(); return CorcheteInicio;}
+
+/* CORCHETE FINAL */
+( "]" ) {lexeme = yytext(); return CorcheteFinal;}
+
+/* COMA */ 
+( "," ) {lexeme=yytext(); return Coma;}
+
+/* PUNTO Y COMA*/
+( ";" ) {lexeme=yytext(); return PuntoComa;}
+
+// DOS PUNTOS
+( ":" ) {lexeme=yytext(); return DosPuntos;}
 
 /* DOLLAR */
 ( "$" ) {lexeme=yytext(); return Dollar;}
 
-/* PALABRAS RESERVADAS */
-/*-------------------------------------------------------------------------------------------------------------*/
-
 /* PALABRA RESERVADA DEFINIR GLOBALES */
-( DefinirGlobales ) {lexeme=yytext(); return DefinirGlobales;}
+( [D|d][E|e][F|f][I|i][N|n][I|i][R|r][G|g][L|l][O|o][B|b][A|a][L|l][E|e][S|s] ) {lexeme=yytext(); return DefinirGlobales;}
 
 /* PALABRA RESERVADA GENERAR REPORTE ESTADISTICO */
-( GemerarReporteEstadistico ) {lexeme=yytext(); return GenerarReporteEstadistico;}
+( [G|g][E|e][N|n][E|e][R|r][A|a][R|r][R|r][E|e][P|p][O|o][R|r][T|t][E|e][E|e][S|s][T|t][A|a][D|d][I|i][S|s][T|t][I|i][C|c][O|o] ) {lexeme=yytext(); return GenerarReporteEstadistico;}
 
 /* PALABRA RESERVADA GRAFICA DE BARRAS */
-( GraficaBarras ) {lexeme=yytext(); return GraficaBarras;}
+( [G|g][R|r][A|a][F|f][I|i][C|c][A|a][B|b][A|a][R|r][R|r][A|a][S|s] ) {lexeme=yytext(); return GraficaBarras;}
 
 /* PALABRA RESERVADA GRAFICA DE PIE */
-( GraficaPie ) {lexeme=yytext(); return GraficaPie;}
+( [G|g][R|r][A|a][F|f][I|i][C|c][A|a][P|p][I|i][E|e] ) {lexeme=yytext(); return GraficaPie;}
 
 /* PALABRA RESERVADA GRAFICA DE LINEAS */
-( GraficaLineas ) {lexeme=yytext(); return GraficaLineas;}
+( [G|g][R|r][A|a][F|f][I|i][C|c][A|a][L|l][I|i][N|n][E|e][A|a][S|s] ) {lexeme=yytext(); return GraficaLineas;}
 
 /* PALABRA RESERVADA COMPARE */
-( Compare ) {lexeme=yytext(); return Compare;}
-
-/* PALABRA RESERVADA STRING */
-( String ) {lexeme=yytext(); return String;}
-
-/* PALABRA RESERVADA STRING */
-( Double ) {lexeme=yytext(); return Double;}
+( [C|c][O|o][M|m][P|p][A|a][R|r][E|e] ) {lexeme=yytext(); return Compare;}
 
 /* PALABRA RESERVADA TITULO */
-( Titulo ) {lexeme=yytext(); return Titulo;}
+( [T|t][I|i][T|t][U|u][L|l][O|o] ) {lexeme=yytext(); return Titulo;}
 
 /* PALABRA RESERVADA ARCHIVO */
-( Archivo ) {lexeme=yytext(); return Archivo;}
+( [A|a][R|r][C|c][H|h][I|i][V|v][O|o] ) {lexeme=yytext(); return Archivo;}
 
 /* PALABRA RESERVADA EJE X */
-( EjeX ) {lexeme=yytext(); return EjeX;}
+( [E|e][J|j][E|e][X|x] ) {lexeme=yytext(); return EjeX;}
 
 /* PALABRA RESERVADA TITULO X */
-( TituloX ) {lexeme=yytext(); return TituloX;}
+( [T|t][I|i][T|t][U|u][L|l][O|o][X|x] ) {lexeme=yytext(); return TituloX;}
 
 /* PALABRA RESERVADA TITULO Y */
-( TituloY ) {lexeme=yytext(); return TituloY;}
+( [T|t][I|i][T|t][U|u][L|l][O|o][Y|y] ) {lexeme=yytext(); return TituloY;}
 
 /* PALABRA RESERVADA VALORES */
-( Valores ) {lexeme=yytext(); return Valores;}
+( [V|v][A|a][L|l][O|o][R|r][E|e][S|s] ) {lexeme=yytext(); return Valores;}
+
+/* DOUBLE */
+( {D}\.{D} ) {lexeme=yytext(); return DOUBLE;}
+
+/* CADENA DE TEXTO ENCERRADA POR COMILLAS SIMPLES */
+( '([^\']*)'|‘([^\‘]*)’ ) {lexeme=yytext(); return Ruta;}
+
+/* CADENA DE TEXTO ENCERRADA POR COMILLAS STRING */
+( \"([^\"]*)\"|“([^“]*)” ) {lexeme=yytext(); return STRING;}
+
+/* IDENTIFICADOR */
+{L}({L}|{D})* {lexeme=yytext(); return Identificador;}
+
+/* ERROR */
+( . ) {return ERROR;}
+
+
 
 
 

@@ -3,10 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.proyecto1.view;
+package com.proyecto1.compiler.analyzer;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Formatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java_cup.runtime.Symbol;
 
 /**
  *
@@ -22,8 +28,148 @@ public class EditorTexto extends javax.swing.JFrame {
      * Creates new form EditorTexto
      */
     public EditorTexto() {
-        idPestana = 1;
+        idPestana = 0;
         initComponents();
+        crearPestana();
+    }
+    
+    private void analizadorLexico() throws IOException {
+        int linea = 1;
+        JScrollPane panelTemp = (JScrollPane) jTabbedPane1.getSelectedComponent();
+        JTextArea editorTemp = (JTextArea) panelTemp.getViewport().getView();
+        String consola = "";
+        Lexer lexer = new Lexer(new StringReader(editorTemp.getText()));
+        Formatter formatoLinea = new Formatter();
+
+        consola += " INICIANDO ANALISIS LEXICO\n";
+        consola += "     LINEA \t" + String.format("%-40s", "TOKEN") + "\t" + "LEXEMA\n" ;
+
+        while (true) {
+            Tokens token = lexer.yylex();
+            formatoLinea = new Formatter();
+            formatoLinea.format("%05d", linea);
+            String tipoToken = "";
+            boolean bandera = true;
+            
+            if (token == null) {
+                break;
+            }
+
+            switch (token) {
+                case Linea:
+                    linea++;
+                    bandera = false;
+                    break;
+                case TipoDato:
+                    tipoToken = "TIPO_DE_DATO";
+                    break;
+                case Igual:
+                    tipoToken = "IGUAL\t";
+                    break;
+                case ParentesisInicio:
+                    tipoToken = "PARENTESIS_INICIO";
+                    break;
+                case ParentesisFinal:
+                    tipoToken = "PARENTESIS_FINAL";
+                    break;
+                case LlaveInicio:
+                    tipoToken = "LLAVE_INICIO";
+                    break;
+                case LlaveFinal:
+                    tipoToken = "LLAVE_CIERRE";
+                    break;
+                case CorcheteInicio:
+                    tipoToken = "CORCHETE_INICIO";
+                    break;
+                case CorcheteFinal:
+                    tipoToken = "CORCHETE_FINAL";
+                    break;
+                case Coma:
+                    tipoToken = "COMA";
+                    break;
+                case PuntoComa:
+                    tipoToken = "PUNTO_Y_COMA";
+                    break;
+                case DosPuntos:
+                    tipoToken = "DOS_PUNTOS";
+                    break;
+                case Dollar:
+                    tipoToken = "DOLLAR";
+                    break;
+                case DefinirGlobales:
+                    tipoToken = "DEFINIR_GLOBALES";
+                    break;
+                case GenerarReporteEstadistico:
+                    tipoToken = "GENERAR_REPORTES_ESTADISTICO";
+                    break;
+                case GraficaBarras:
+                    tipoToken = "GRAFICA_BARRAS";
+                    break;
+                case GraficaPie:
+                    tipoToken = "GRAFICA_PIE";
+                    break;
+                case GraficaLineas:
+                    tipoToken = "GRAFICA_LINEAS";
+                    break;
+                case Compare:
+                    tipoToken = "COMPARE";
+                    break;
+                case Titulo:
+                    tipoToken = "TITULO";
+                    break;
+                case Archivo:
+                    tipoToken = "ARCHIVO";
+                    break;
+                case EjeX:
+                    tipoToken = "EJE_X\t";
+                    break;
+                case TituloX:
+                    tipoToken = "TITULO_X";
+                    break;
+                case TituloY:
+                    tipoToken = "TITULO_Y";
+                    break;
+                case Valores:
+                    tipoToken = "VALORES";
+                    break;
+                case DOUBLE:
+                    tipoToken = "DOUBLE";
+                    break;
+                case Ruta:
+                    tipoToken = "RUTA\t";
+                    break;
+                case STRING:
+                    tipoToken = "STRING";
+                    break;
+                case Identificador:
+                    tipoToken = "IDENTIFICADOR";
+                    break;
+                case ERROR:
+                    tipoToken = "ERROR";
+                    break;
+                default:
+                    bandera = false;
+                    break;
+            }
+            if(bandera) {
+                consola += "     " + formatoLinea + "\t" + String.format("%-40s", tipoToken) + "\t" + lexer.lexeme + "\n";
+            }
+            
+        };
+        consola += "FIN ANALISIS LEXICO";
+        txtConsola.setText(consola);
+    }
+    
+    private void crearPestana() {
+        editor = new JTextArea();
+        panelEditor = new JScrollPane();
+        
+        editor.setColumns(20);
+        editor.setRows(5);
+        panelEditor.setViewportView(editor);
+
+        jTabbedPane1.addTab("PESTAÑA " + idPestana, panelEditor);
+        idPestana++;
     }
 
     @SuppressWarnings("unchecked")
@@ -38,11 +184,13 @@ public class EditorTexto extends javax.swing.JFrame {
         eliminarPestana = new javax.swing.JButton();
         ejecutar = new javax.swing.JButton();
         reportes = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
+        btnGuardar1 = new javax.swing.JButton();
         jSplitPane2 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtConsola = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -53,7 +201,7 @@ public class EditorTexto extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(1200, 800));
         setSize(new java.awt.Dimension(1400, 900));
 
-        jLabel1.setFont(new java.awt.Font("Ubuntu", 1, 25)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Ubuntu Light", 1, 30)); // NOI18N
         jLabel1.setText(" PROYECTO 1 - FIUSAC COPY ANALYZER FIUSAC");
 
         jToolBar1.setRollover(true);
@@ -135,12 +283,42 @@ public class EditorTexto extends javax.swing.JFrame {
         });
         jToolBar1.add(reportes);
 
+        btnGuardar.setFont(new java.awt.Font("Ubuntu Light", 0, 15)); // NOI18N
+        btnGuardar.setText("GUARDAR");
+        btnGuardar.setFocusable(false);
+        btnGuardar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGuardar.setMargin(new java.awt.Insets(0, 20, 0, 20));
+        btnGuardar.setMinimumSize(new java.awt.Dimension(150, 50));
+        btnGuardar.setPreferredSize(new java.awt.Dimension(150, 50));
+        btnGuardar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnGuardar);
+
+        btnGuardar1.setFont(new java.awt.Font("Ubuntu Light", 0, 15)); // NOI18N
+        btnGuardar1.setText(" GUARDAR COMO");
+        btnGuardar1.setFocusable(false);
+        btnGuardar1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGuardar1.setMargin(new java.awt.Insets(0, 20, 0, 20));
+        btnGuardar1.setMinimumSize(new java.awt.Dimension(150, 50));
+        btnGuardar1.setPreferredSize(new java.awt.Dimension(150, 50));
+        btnGuardar1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGuardar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardar1ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnGuardar1);
+
         jLabel2.setFont(new java.awt.Font("Ubuntu", 1, 25)); // NOI18N
         jLabel2.setText("CONSOLA");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        txtConsola.setColumns(20);
+        txtConsola.setRows(5);
+        jScrollPane1.setViewportView(txtConsola);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -150,7 +328,7 @@ public class EditorTexto extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 783, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -195,9 +373,12 @@ public class EditorTexto extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSplitPane2)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -213,13 +394,13 @@ public class EditorTexto extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1009, Short.MAX_VALUE)
+            .addGap(0, 1062, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 682, Short.MAX_VALUE)
+            .addGap(0, 687, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -228,20 +409,8 @@ public class EditorTexto extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void archivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivoActionPerformed
-        System.out.println("ARCHIVO");
-    }//GEN-LAST:event_archivoActionPerformed
-
     private void crearPestanaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearPestanaActionPerformed
-        editor = new JTextArea();
-        panelEditor = new JScrollPane();
-        
-        editor.setColumns(20);
-        editor.setRows(5);
-        panelEditor.setViewportView(editor);
-
-        jTabbedPane1.addTab("PESTAÑA " + idPestana, panelEditor);
-        idPestana++;
+        crearPestana();
     }//GEN-LAST:event_crearPestanaActionPerformed
 
     private void eliminarPestanaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarPestanaActionPerformed
@@ -250,15 +419,33 @@ public class EditorTexto extends javax.swing.JFrame {
     }//GEN-LAST:event_eliminarPestanaActionPerformed
 
     private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
-        System.out.println("EJECUTAR");
+        try {
+            analizadorLexico();
+        } catch (IOException ex) {
+            Logger.getLogger(EditorTexto.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_ejecutarActionPerformed
 
     private void reportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportesActionPerformed
         System.out.println("REPORTES");
     }//GEN-LAST:event_reportesActionPerformed
 
+    private void archivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivoActionPerformed
+        System.out.println("ARCHIVO");
+    }//GEN-LAST:event_archivoActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnGuardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardar1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton archivo;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnGuardar1;
     private javax.swing.JButton crearPestana;
     private javax.swing.JButton ejecutar;
     private javax.swing.JButton eliminarPestana;
@@ -271,8 +458,8 @@ public class EditorTexto extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton reportes;
+    private javax.swing.JTextArea txtConsola;
     // End of variables declaration//GEN-END:variables
 }
