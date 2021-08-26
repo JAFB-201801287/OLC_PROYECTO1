@@ -1,1 +1,188 @@
+package com.proyecto1.compiler.analyzer;
+import java_cup.runtime.Symbol;
 
+/* METODO PARSER -> RETORNA EL SIMBOLO ANALIZADO */
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+parser code
+{:
+    private Symbol simbolo;
+    
+    public void syntax_error(Symbol simbolo){
+        this.simbolo = simbolo;
+    }
+
+    public Symbol getSimbolo(){
+        return this.simbolo;
+}
+:};
+
+/* SIMBOLOS TERMINALES */
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+
+terminal Linea,
+         STRING,
+         DOUBLE,
+         Igual,
+         ParentesisInicio,
+         ParentesisFinal,
+         LlaveInicio,
+         LlaveFinal,
+         CorcheteInicio,
+         CorcheteFinal,
+         Coma,
+         PuntoComa,
+         DosPuntos,
+         Dollar,
+         PuntajeGeneral,
+         PuntajeEspecifico,
+         DefinirGlobales,
+         GenerarReporteEstadistico,
+         GraficaBarras,
+         GraficaPie,
+         GraficaLineas,
+         Compare,
+         Titulo,
+         Archivo,
+         EjeX,
+         TituloX,
+         TituloY,
+         Valores,
+         Decimal,
+         Ruta,
+         Cadena,
+         Identificador,
+         ERROR;
+
+/* SIMBOLOS NO TERMINALES */
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+
+non terminal INICIO, 
+             GENERAR_REPORTE_ESTADISTICO, 
+             INSTRUCCION,
+             PUNTAJE_GENERAL,
+             PUNTAJE_ESPECIFICO,
+             LISTA_STRING,
+             LISTA_DOUBLE,
+             TITULO,
+             ARCHIVO,
+             EJEX,
+             TITULOX,
+             TITULOY,
+             VALORES,
+             DECLARAR_VARIABLE,
+             DEFINIR_GLOBALES,
+             CARACTERISTICA_BARRAS,
+             GRAFICA_BARRAS,
+             CARACTERISTICA_PIE,
+             GRAFICA_PIE,
+             CARACTERISTICA_LINEAS,
+             GRAFICA_LINEAS,
+             COMPARE;
+
+precedence left Identificador;
+precedence left Cadena, Ruta; 
+
+// SE DEFINI INICIO COMO PRIMER NO TERMINAL
+start with INICIO;
+
+/* PRODUCCIONES */
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+
+INICIO ::= GENERAR_REPORTE_ESTADISTICO;
+
+
+// GENERAR REPORTE ESTADISTICO
+GENERAR_REPORTE_ESTADISTICO ::= GenerarReporteEstadistico LlaveInicio INSTRUCCION;
+
+// INSTRUCCIONES
+INSTRUCCION ::= DEFINIR_GLOBALES INSTRUCCION
+              | GRAFICA_BARRAS INSTRUCCION
+              | GRAFICA_PIE INSTRUCCION
+              | GRAFICA_LINEAS INSTRUCCION
+              | COMPARE INSTRUCCION
+              | LlaveFinal;
+
+// PUNTAJE GENERAL 
+PUNTAJE_GENERAL ::= Dollar LlaveInicio PuntajeGeneral LlaveFinal;
+
+// PUNTAJE ESPECIFICO 
+PUNTAJE_ESPECIFICO ::= Dollar LlaveInicio PuntajeEspecifico Coma Cadena Coma Cadena Coma Cadena LlaveFinal;
+
+// LISTA DE STRING
+LISTA_STRING ::= Cadena Coma LISTA_STRING
+               | Identificador Coma LISTA_STRING
+               | Cadena
+               | Identificador;
+
+// LISTA DE DOUBLE
+LISTA_DOUBLE ::= Decimal Coma LISTA_DOUBLE
+               | PUNTAJE_GENERAL Coma LISTA_DOUBLE
+               | PUNTAJE_ESPECIFICO Coma LISTA_DOUBLE
+               | Identificador Coma LISTA_DOUBLE
+               | Decimal
+               | PUNTAJE_GENERAL
+               | PUNTAJE_ESPECIFICO
+               | Identificador;
+
+// TITULO
+TITULO ::= Titulo DosPuntos Cadena PuntoComa;
+TITULO ::= Titulo DosPuntos Identificador PuntoComa;
+
+// ARCHIVO
+ARCHIVO ::= Archivo DosPuntos Cadena PuntoComa;
+ARCHIVO ::= Archivo DosPuntos Identificador PuntoComa;
+
+// EJE X
+EJEX ::= EjeX DosPuntos CorcheteInicio LISTA_STRING CorcheteFinal PuntoComa; 
+
+// TITULO X
+TITULOX ::= TituloX DosPuntos Cadena PuntoComa;
+TITULOX ::= TituloX DosPuntos Identificador PuntoComa;
+
+// TITULO Y
+TITULOY ::= TituloY DosPuntos Cadena PuntoComa;
+TITULOY ::= TituloY DosPuntos Identificador PuntoComa;
+
+// VALORES
+VALORES ::= Valores DosPuntos CorcheteInicio LISTA_DOUBLE CorcheteFinal PuntoComa; 
+
+// DECLARAR VARIABLES
+DECLARAR_VARIABLE ::= STRING Identificador Igual Cadena PuntoComa DECLARAR_VARIABLE
+                    | DOUBLE Identificador Igual Decimal PuntoComa DECLARAR_VARIABLE
+                    | DOUBLE Identificador Igual PUNTAJE_GENERAL PuntoComa DECLARAR_VARIABLE
+                    | DOUBLE Identificador Igual PUNTAJE_ESPECIFICO PuntoComa DECLARAR_VARIABLE
+                    | LlaveFinal;
+ 
+// DEFINIR GLOBALES
+DEFINIR_GLOBALES ::= DefinirGlobales LlaveInicio DECLARAR_VARIABLE;
+
+// CARACTERISTICAS DE GRAFICA DE BARRAS
+CARACTERISTICA_BARRAS ::= TITULO CARACTERISTICA_BARRAS;
+CARACTERISTICA_BARRAS ::= EJEX CARACTERISTICA_BARRAS;
+CARACTERISTICA_BARRAS ::= VALORES CARACTERISTICA_BARRAS;
+CARACTERISTICA_BARRAS ::= TITULOX CARACTERISTICA_BARRAS;
+CARACTERISTICA_BARRAS ::= TITULOY CARACTERISTICA_BARRAS;
+CARACTERISTICA_BARRAS ::= LlaveFinal;
+
+// GRAFICA DE BARRAS
+GRAFICA_BARRAS ::= GraficaBarras LlaveInicio CARACTERISTICA_BARRAS;
+
+// CARACTERISTICAS DE GRAFICA DE PIE
+CARACTERISTICA_PIE ::= TITULO CARACTERISTICA_PIE;
+CARACTERISTICA_PIE ::= EJEX CARACTERISTICA_PIE;
+CARACTERISTICA_PIE ::= VALORES CARACTERISTICA_PIE;
+CARACTERISTICA_PIE ::= LlaveFinal;
+
+// GRAFICA DE PIE
+GRAFICA_PIE ::= GraficaPie LlaveInicio CARACTERISTICA_PIE;
+
+// CARACTERISTICAS DE GRAFICA DE LINEAS
+CARACTERISTICA_LINEAS ::= TITULO CARACTERISTICA_LINEAS;
+CARACTERISTICA_LINEAS ::= ARCHIVO CARACTERISTICA_LINEAS;
+CARACTERISTICA_LINEAS ::= LlaveFinal;
+
+// GRAFICA DE LINEAS
+GRAFICA_LINEAS ::= GraficaLineas LlaveInicio CARACTERISTICA_LINEAS;
+
+// COMPARE
+COMPARE ::= Compare ParentesisInicio Ruta Coma Ruta ParentesisFinal PuntoComa;

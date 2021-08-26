@@ -13,7 +13,9 @@ package com.proyecto1.compiler.analyzer;
 
 public enum Tokens {
     Linea,
-    TipoDato,
+    Coma,
+    STRING,
+    DOUBLE,
     Igual,
     ParentesisInicio,
     ParentesisFinal,
@@ -21,10 +23,12 @@ public enum Tokens {
     LlaveFinal,
     CorcheteInicio,
     CorcheteFinal,
-    Coma,
     PuntoComa,
+
     DosPuntos,
     Dollar,
+    PuntajeGeneral,
+    PuntajeEspecifico,
     DefinirGlobales,
     GenerarReporteEstadistico,
     GraficaBarras,
@@ -37,9 +41,9 @@ public enum Tokens {
     TituloX,
     TituloY,
     Valores,
-    DOUBLE,
+    Decimal,
     Ruta,
-    STRING,
+    Cadena,
     Identificador,
     ERROR,
 }

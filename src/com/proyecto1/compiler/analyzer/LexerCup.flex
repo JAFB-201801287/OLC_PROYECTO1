@@ -52,8 +52,14 @@ espacio=[ ,\t,\r,\n]+
 /* DEFINIR LEXICO */
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 
-// TIPOS DE DATOS
-( [S|s][T|t][R|r][I|i][N|n][G|g] | [D|d][O|o][U|u][B|b][L|l][E|e] ) {return new Symbol(sym.TipoDato, yychar, yyline, yytext());}
+// COMA
+( "<COMA8264>" )   {return new Symbol(sym.Coma, yychar, yyline, yytext());}
+
+// TIPOS DE DATO STRING
+( [S|s][T|t][R|r][I|i][N|n][G|g] ) {return new Symbol(sym.STRING, yychar, yyline, yytext());}
+
+// TIPOS DE DATO DOUBLE
+( [D|d][O|o][U|u][B|b][L|l][E|e] ) {return new Symbol(sym.DOUBLE, yychar, yyline, yytext());}
 
 // IGUAL
 ( "=" ) {return new Symbol(sym.Igual, yychar, yyline, yytext());}
@@ -76,9 +82,6 @@ espacio=[ ,\t,\r,\n]+
 // CORCHETE FINAL
 ( "]" ) {return new Symbol(sym.CorcheteFinal, yychar, yyline, yytext());}
 
-// COMA
-( "," ) {return new Symbol(sym.Coma, yychar, yyline, yytext());}
-
 // PUNTO Y COMA
 ( ";" ) {return new Symbol(sym.PuntoComa, yychar, yyline, yytext());}
 
@@ -87,6 +90,12 @@ espacio=[ ,\t,\r,\n]+
 
 // DOLLAR
 ( "$" ) {return new Symbol(sym.Dollar, yychar, yyline, yytext());}
+
+// PALABRA RESERVADA PUNTAJE GENERAL
+( [P|p][U|u][N|n][T|t][A|a][J|j][E|e][G|g][E|e][N|n][E|e][R|r][A|a][L|l] ) {return new Symbol(sym.PuntajeGeneral, yychar, yyline, yytext());}
+
+// PALABRA RESERVADA PUNTAJE ESPECIFICO
+( [P|p][U|u][N|n][T|t][A|a][J|j][E|e][E|e][S|s][P|p][E|e][C|c][I|i][F|f][I|i][C|c][O|o] ) {return new Symbol(sym.PuntajeEspecifico, yychar, yyline, yytext());}
 
 // PALABRA RESERVADA DEFINIR GLOBALES
 ( [D|d][E|e][F|f][I|i][N|n][I|i][R|r][G|g][L|l][O|o][B|b][A|a][L|l][E|e][S|s] ) {return new Symbol(sym.DefinirGlobales, yychar, yyline, yytext());}
@@ -124,14 +133,14 @@ espacio=[ ,\t,\r,\n]+
 // PALABRA RESERVADA VALORES
 ( [V|v][A|a][L|l][O|o][R|r][E|e][S|s] ) {return new Symbol(sym.Valores, yychar, yyline, yytext());}
 
-// NUMEROS DECIMALES DOUBLE
-( {D}\.{D} ) {return new Symbol(sym.DOUBLE, yychar, yyline, yytext());}
+// NUMEROS DECIMALES
+( {D}\.{D} ) {return new Symbol(sym.Decimal, yychar, yyline, yytext());}
 
 // CADENA DE TEXTO ENCERRADA POR COMILLAS SIMPLES RUTA 
 ( '([^\']*)'|‘([^\‘]*)’ ) {return new Symbol(sym.Ruta, yychar, yyline, yytext());}
 
 // CADENA DE TEXTO ENCERRADA POR COMILLAS STRING
-( \"([^\"]*)\"|“([^“]*)” ) {return new Symbol(sym.STRING, yychar, yyline, yytext());}
+( \"([^\"]*)\"|“([^“]*)” ) {return new Symbol(sym.Cadena, yychar, yyline, yytext());}
 
 // IDENTIFICADOR
 ( {L}({L}|{D})* ) {return new Symbol(sym.Identificador, yychar, yyline, yytext());}

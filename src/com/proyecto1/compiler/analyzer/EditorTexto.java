@@ -5,6 +5,7 @@
  */
 package com.proyecto1.compiler.analyzer;
 
+import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.io.IOException;
@@ -33,12 +34,13 @@ public class EditorTexto extends javax.swing.JFrame {
         crearPestana();
     }
     
-    private void analizadorLexico() throws IOException {
+    private String analizadorLexico() throws IOException {
         int linea = 1;
         JScrollPane panelTemp = (JScrollPane) jTabbedPane1.getSelectedComponent();
         JTextArea editorTemp = (JTextArea) panelTemp.getViewport().getView();
         String consola = "";
-        Lexer lexer = new Lexer(new StringReader(editorTemp.getText()));
+        String tempText = editorTemp.getText().replace(",","<COMA8264>");
+        Lexer lexer = new Lexer(new StringReader(tempText));
         Formatter formatoLinea = new Formatter();
 
         consola += " INICIANDO ANALISIS LEXICO\n";
@@ -60,8 +62,11 @@ public class EditorTexto extends javax.swing.JFrame {
                     linea++;
                     bandera = false;
                     break;
-                case TipoDato:
-                    tipoToken = "TIPO_DE_DATO";
+                case STRING:
+                    tipoToken = "TIPO_DE_DATO_STRING";
+                    break;
+                case DOUBLE:
+                    tipoToken = "TIPO_DE_DOUBLE";
                     break;
                 case Igual:
                     tipoToken = "IGUAL\t";
@@ -95,6 +100,12 @@ public class EditorTexto extends javax.swing.JFrame {
                     break;
                 case Dollar:
                     tipoToken = "DOLLAR";
+                    break;
+                case PuntajeGeneral:
+                    tipoToken = "PUNTAJE_GENERAL";
+                    break;
+                case PuntajeEspecifico:
+                    tipoToken = "PUNTAJE_ESPECIFICO";
                     break;
                 case DefinirGlobales:
                     tipoToken = "DEFINIR_GLOBALES";
@@ -132,14 +143,14 @@ public class EditorTexto extends javax.swing.JFrame {
                 case Valores:
                     tipoToken = "VALORES";
                     break;
-                case DOUBLE:
-                    tipoToken = "DOUBLE";
+                case Decimal:
+                    tipoToken = "NUMERO_DECIMAL";
                     break;
                 case Ruta:
                     tipoToken = "RUTA\t";
                     break;
-                case STRING:
-                    tipoToken = "STRING";
+                case Cadena:
+                    tipoToken = "CADENA_DE_TEXTO";
                     break;
                 case Identificador:
                     tipoToken = "IDENTIFICADOR";
@@ -156,8 +167,34 @@ public class EditorTexto extends javax.swing.JFrame {
             }
             
         };
-        consola += "FIN ANALISIS LEXICO";
-        txtConsola.setText(consola);
+        consola += " FIN ANALISIS LEXICO\n";
+        return consola;
+    }
+    
+    private String analizadorSemantico() throws IOException {
+        String consola = "";
+        JScrollPane panelTemp = (JScrollPane) jTabbedPane1.getSelectedComponent();
+        JTextArea editorTemp = (JTextArea) panelTemp.getViewport().getView();
+        String tempText = editorTemp.getText().replace(",","<COMA8264>");
+        tempText = tempText.replace("“", "\"");
+        tempText = tempText.replace("”", "\"");
+        tempText = tempText.replace("‘", "\'");
+        tempText = tempText.replace("’", "\'");
+        Sintax sintax = new Sintax(new LexicoCup(new StringReader(tempText)));
+        
+        try {
+            // Metodo parse de nuestro archivo generado del sintactico.cup
+            sintax.parse();
+            consola = "ANALISIS SINTACTICO REALIZADO CORRECTAMENTE.";
+
+        } catch (Exception ex) {
+            // Se obtiene el simbolo que estamos analizando y se obtiene la fila(sym.right) y el s{imbolo con sym.value para especificar
+            // en donde se obtuvo el error sintactico
+            Symbol sym = sintax.getSimbolo();         
+            consola = "ERROR SINTACTICO. LINEA: " + (sym.right + 1) + ", TEXTO: \"" + sym.value + "\"";
+        }
+        
+        return  consola;
     }
     
     private void crearPestana() {
@@ -328,7 +365,7 @@ public class EditorTexto extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 783, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -394,7 +431,7 @@ public class EditorTexto extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1062, Short.MAX_VALUE)
+            .addGap(0, 1078, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -420,7 +457,10 @@ public class EditorTexto extends javax.swing.JFrame {
 
     private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
         try {
-            analizadorLexico();
+            String consola = analizadorLexico();
+            consola += "\n";
+            consola += analizadorSemantico();
+            txtConsola.setText(consola);    
         } catch (IOException ex) {
             Logger.getLogger(EditorTexto.class.getName()).log(Level.SEVERE, null, ex);
         }

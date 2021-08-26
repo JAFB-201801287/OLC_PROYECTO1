@@ -26,8 +26,14 @@ espacio = [ ,\t,\r]+
 /* SALTO DE LINEA */
 ( "\n" ) {return Linea;}
 
-/* TIPOS DE DATOS */
-( [S|s][T|t][R|r][I|i][N|n][G|g] | [D|d][O|o][U|u][B|b][L|l][E|e] ) {lexeme=yytext(); return TipoDato;}
+/* COMA */
+( "<COMA8264>" ) {lexeme=","; return Coma;}
+
+/* TIPOS DE DATO STRING */
+( [S|s][T|t][R|r][I|i][N|n][G|g] ) {lexeme=yytext(); return STRING;}
+
+/* TIPOS DE DATO DOUBLE */
+( [D|d][O|o][U|u][B|b][L|l][E|e] ) {lexeme=yytext(); return DOUBLE;}
 
 /* IGUAL */
 ( "=" ) {lexeme=yytext(); return Igual;}
@@ -50,9 +56,6 @@ espacio = [ ,\t,\r]+
 /* CORCHETE FINAL */
 ( "]" ) {lexeme = yytext(); return CorcheteFinal;}
 
-/* COMA */ 
-( "," ) {lexeme=yytext(); return Coma;}
-
 /* PUNTO Y COMA*/
 ( ";" ) {lexeme=yytext(); return PuntoComa;}
 
@@ -61,6 +64,12 @@ espacio = [ ,\t,\r]+
 
 /* DOLLAR */
 ( "$" ) {lexeme=yytext(); return Dollar;}
+
+/* PALABRA RESERVADA PUNTAJE GENERAL */
+( [P|p][U|u][N|n][T|t][A|a][J|j][E|e][G|g][E|e][N|n][E|e][R|r][A|a][L|l] ) {lexeme=yytext(); return PuntajeGeneral;}
+
+/* PALABRA RESERVADA PUNTAJE ESPECIFICO */
+( [P|p][U|u][N|n][T|t][A|a][J|j][E|e][E|e][S|s][P|p][E|e][C|c][I|i][F|f][I|i][C|c][O|o] ) {lexeme=yytext(); return PuntajeEspecifico;}
 
 /* PALABRA RESERVADA DEFINIR GLOBALES */
 ( [D|d][E|e][F|f][I|i][N|n][I|i][R|r][G|g][L|l][O|o][B|b][A|a][L|l][E|e][S|s] ) {lexeme=yytext(); return DefinirGlobales;}
@@ -98,14 +107,14 @@ espacio = [ ,\t,\r]+
 /* PALABRA RESERVADA VALORES */
 ( [V|v][A|a][L|l][O|o][R|r][E|e][S|s] ) {lexeme=yytext(); return Valores;}
 
-/* DOUBLE */
-( {D}\.{D} ) {lexeme=yytext(); return DOUBLE;}
+/* NUMERO DECIMAL */
+( {D}\.{D} ) {lexeme=yytext(); return Decimal;}
 
 /* CADENA DE TEXTO ENCERRADA POR COMILLAS SIMPLES */
 ( '([^\']*)'|‘([^\‘]*)’ ) {lexeme=yytext(); return Ruta;}
 
 /* CADENA DE TEXTO ENCERRADA POR COMILLAS STRING */
-( \"([^\"]*)\"|“([^“]*)” ) {lexeme=yytext(); return STRING;}
+( \"([^\"]*)\"|“([^“]*)” ) {lexeme=yytext(); return Cadena;}
 
 /* IDENTIFICADOR */
 {L}({L}|{D})* {lexeme=yytext(); return Identificador;}
