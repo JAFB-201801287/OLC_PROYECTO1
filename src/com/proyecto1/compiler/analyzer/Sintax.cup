@@ -1,11 +1,16 @@
 package com.proyecto1.compiler.analyzer;
 import java_cup.runtime.Symbol;
 
+import com.proyecto1.model.Puntaje;
+import com.proyecto1.controller.VariableController;
+import com.proyecto1.controller.GraficaController;
+
 /* METODO PARSER -> RETORNA EL SIMBOLO ANALIZADO */
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 parser code
 {:
     private Symbol simbolo;
+    private Puntaje puntaje;
     
     public void syntax_error(Symbol simbolo){
         this.simbolo = simbolo;
@@ -47,11 +52,12 @@ terminal Linea,
          TituloX,
          TituloY,
          Valores,
-         Decimal,
-         Ruta,
-         Cadena,
-         Identificador,
-         ERROR;
+         ERROR; 
+
+terminal String Decimal,
+                Cadena,
+                Ruta,
+                Identificador;
 
 /* SIMBOLOS NO TERMINALES */
 /*----------------------------------------------------------------------------------------------------------------------------------*/
@@ -103,86 +109,92 @@ INSTRUCCION ::= DEFINIR_GLOBALES INSTRUCCION
               | LlaveFinal;
 
 // PUNTAJE GENERAL 
-PUNTAJE_GENERAL ::= Dollar LlaveInicio PuntajeGeneral LlaveFinal;
+PUNTAJE_GENERAL ::= Dollar LlaveInicio PuntajeGeneral LlaveFinal {: puntaje = new Puntaje("PuntajeGeneral"); :};
 
 // PUNTAJE ESPECIFICO 
-PUNTAJE_ESPECIFICO ::= Dollar LlaveInicio PuntajeEspecifico Coma Cadena Coma Cadena Coma Cadena LlaveFinal;
+PUNTAJE_ESPECIFICO ::= Dollar LlaveInicio PuntajeEspecifico Coma Cadena:nombreArchivo Coma Cadena:valor Coma Cadena:identificador LlaveFinal {: puntaje = new Puntaje("PuntajeEspecifico", nombreArchivo, valor, identificador); :};
 
 // LISTA DE STRING
-LISTA_STRING ::= Cadena Coma LISTA_STRING
-               | Identificador Coma LISTA_STRING
-               | Cadena
-               | Identificador;
+LISTA_STRING ::= Cadena:valor Coma {: GraficaController.getInstance().addEjeX(valor.replace("\"",""), "", 0); :} LISTA_STRING
+               | Identificador:nombreVariable Coma {: GraficaController.getInstance().addEjeX("", nombreVariable, 0); :} LISTA_STRING
+               | Cadena:valor {: GraficaController.getInstance().addEjeX(valor.replace("\"",""), "", 0); :} 
+               | Identificador:nombreVariable {: GraficaController.getInstance().addEjeX("", nombreVariable, 0); :};
 
 // LISTA DE DOUBLE
-LISTA_DOUBLE ::= Decimal Coma LISTA_DOUBLE
-               | PUNTAJE_GENERAL Coma LISTA_DOUBLE
-               | PUNTAJE_ESPECIFICO Coma LISTA_DOUBLE
-               | Identificador Coma LISTA_DOUBLE
-               | Decimal
-               | PUNTAJE_GENERAL
-               | PUNTAJE_ESPECIFICO
-               | Identificador;
+LISTA_DOUBLE ::= Decimal:valor Coma {: GraficaController.getInstance().addValor(Double.parseDouble(valor), "", 0); :} LISTA_DOUBLE
+               | PUNTAJE_GENERAL Coma {: GraficaController.getInstance().addValor(puntaje, 0); puntaje = null; :} LISTA_DOUBLE
+               | PUNTAJE_ESPECIFICO Coma {: GraficaController.getInstance().addValor(puntaje, 0); puntaje = null; :} LISTA_DOUBLE
+               | Identificador:nombreVariable Coma {: GraficaController.getInstance().addValor(0.0, nombreVariable, 0); :} LISTA_DOUBLE
+               | Decimal:valor {: GraficaController.getInstance().addValor(Double.parseDouble(valor), "", 0); :}
+               | PUNTAJE_GENERAL {: GraficaController.getInstance().addValor(puntaje, 0); puntaje = null; :}
+               | PUNTAJE_ESPECIFICO {: GraficaController.getInstance().addValor(puntaje, 0); puntaje = null;  :}
+               | Identificador:nombreVariable {: GraficaController.getInstance().addValor(0.0, nombreVariable, 0); :};
 
 // TITULO
-TITULO ::= Titulo DosPuntos Cadena PuntoComa;
-TITULO ::= Titulo DosPuntos Identificador PuntoComa;
+TITULO ::= Titulo DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTitulo(valor.replace("\"",""), "", 0); :}
+         | Titulo DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTitulo("", nombreVariable, 0); :};
 
 // ARCHIVO
-ARCHIVO ::= Archivo DosPuntos Cadena PuntoComa;
-ARCHIVO ::= Archivo DosPuntos Identificador PuntoComa;
+ARCHIVO ::= Archivo DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addArchivo(valor.replace("\"",""), "", 0); :}
+          | Archivo DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addArchivo("", nombreVariable, 0); :};
 
 // EJE X
 EJEX ::= EjeX DosPuntos CorcheteInicio LISTA_STRING CorcheteFinal PuntoComa; 
 
 // TITULO X
-TITULOX ::= TituloX DosPuntos Cadena PuntoComa;
-TITULOX ::= TituloX DosPuntos Identificador PuntoComa;
+TITULOX ::= TituloX DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTitulox(valor.replace("\"",""), "", 0); :}
+          | TituloX DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTitulox("", nombreVariable, 0); :};
 
 // TITULO Y
-TITULOY ::= TituloY DosPuntos Cadena PuntoComa;
-TITULOY ::= TituloY DosPuntos Identificador PuntoComa;
+TITULOY ::= TituloY DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTituloy(valor.replace("\"",""), "", 0); :}
+          | TituloY DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTituloy("", nombreVariable, 0); :};
 
 // VALORES
 VALORES ::= Valores DosPuntos CorcheteInicio LISTA_DOUBLE CorcheteFinal PuntoComa; 
 
 // DECLARAR VARIABLES
-DECLARAR_VARIABLE ::= STRING Identificador Igual Cadena PuntoComa DECLARAR_VARIABLE
-                    | DOUBLE Identificador Igual Decimal PuntoComa DECLARAR_VARIABLE
-                    | DOUBLE Identificador Igual PUNTAJE_GENERAL PuntoComa DECLARAR_VARIABLE
-                    | DOUBLE Identificador Igual PUNTAJE_ESPECIFICO PuntoComa DECLARAR_VARIABLE
+DECLARAR_VARIABLE ::= STRING Identificador:nombreVariable Igual Cadena:valor PuntoComa {: VariableController.getInstance().add(valor.replace("\"",""), nombreVariable, 0); :} DECLARAR_VARIABLE 
+                    | DOUBLE Identificador:nombreVariable Igual Decimal:valor PuntoComa {: VariableController.getInstance().add(Double.parseDouble(valor), nombreVariable, 0); :} DECLARAR_VARIABLE
+                    | DOUBLE Identificador Igual PUNTAJE_GENERAL PuntoComa {: VariableController.getInstance().add(puntaje, 0); puntaje = null; :} DECLARAR_VARIABLE 
+                    | DOUBLE Identificador Igual PUNTAJE_ESPECIFICO PuntoComa {: VariableController.getInstance().add(puntaje, 0); puntaje = null; :} DECLARAR_VARIABLE
                     | LlaveFinal;
  
 // DEFINIR GLOBALES
 DEFINIR_GLOBALES ::= DefinirGlobales LlaveInicio DECLARAR_VARIABLE;
 
 // CARACTERISTICAS DE GRAFICA DE BARRAS
-CARACTERISTICA_BARRAS ::= TITULO CARACTERISTICA_BARRAS;
-CARACTERISTICA_BARRAS ::= EJEX CARACTERISTICA_BARRAS;
-CARACTERISTICA_BARRAS ::= VALORES CARACTERISTICA_BARRAS;
-CARACTERISTICA_BARRAS ::= TITULOX CARACTERISTICA_BARRAS;
-CARACTERISTICA_BARRAS ::= TITULOY CARACTERISTICA_BARRAS;
-CARACTERISTICA_BARRAS ::= LlaveFinal;
+CARACTERISTICA_BARRAS ::= TITULO CARACTERISTICA_BARRAS
+                        | EJEX CARACTERISTICA_BARRAS
+                        | VALORES CARACTERISTICA_BARRAS
+                        | TITULOX CARACTERISTICA_BARRAS
+                        | TITULOY CARACTERISTICA_BARRAS
+                        | LlaveFinal;
 
 // GRAFICA DE BARRAS
-GRAFICA_BARRAS ::= GraficaBarras LlaveInicio CARACTERISTICA_BARRAS;
+GRAFICA_BARRAS ::= GraficaBarras LlaveInicio CARACTERISTICA_BARRAS {: GraficaController.getInstance().addGraficaBarras(); :};
 
 // CARACTERISTICAS DE GRAFICA DE PIE
-CARACTERISTICA_PIE ::= TITULO CARACTERISTICA_PIE;
-CARACTERISTICA_PIE ::= EJEX CARACTERISTICA_PIE;
-CARACTERISTICA_PIE ::= VALORES CARACTERISTICA_PIE;
-CARACTERISTICA_PIE ::= LlaveFinal;
+CARACTERISTICA_PIE ::= TITULO CARACTERISTICA_PIE
+                     | EJEX CARACTERISTICA_PIE
+                     | VALORES CARACTERISTICA_PIE
+                     | LlaveFinal;
 
 // GRAFICA DE PIE
-GRAFICA_PIE ::= GraficaPie LlaveInicio CARACTERISTICA_PIE;
+GRAFICA_PIE ::= GraficaPie LlaveInicio CARACTERISTICA_PIE {: GraficaController.getInstance().addGraficaPie(); :};
 
 // CARACTERISTICAS DE GRAFICA DE LINEAS
-CARACTERISTICA_LINEAS ::= TITULO CARACTERISTICA_LINEAS;
-CARACTERISTICA_LINEAS ::= ARCHIVO CARACTERISTICA_LINEAS;
-CARACTERISTICA_LINEAS ::= LlaveFinal;
+CARACTERISTICA_LINEAS ::= TITULO CARACTERISTICA_LINEAS
+                        | ARCHIVO CARACTERISTICA_LINEAS
+                        | LlaveFinal;
 
 // GRAFICA DE LINEAS
-GRAFICA_LINEAS ::= GraficaLineas LlaveInicio CARACTERISTICA_LINEAS;
+GRAFICA_LINEAS ::= GraficaLineas LlaveInicio CARACTERISTICA_LINEAS {: GraficaController.getInstance().addGraficaLineas(); :} ;
 
 // COMPARE
-COMPARE ::= Compare ParentesisInicio Ruta Coma Ruta ParentesisFinal PuntoComa;
+COMPARE ::= Compare ParentesisInicio Ruta:rutaProyecto1 Coma Ruta:rutaProyecto2 ParentesisFinal PuntoComa 
+{: 
+VariableController.getInstance().addRutaProyecto1(rutaProyecto1.replace("'", ""));
+VariableController.getInstance().addRutaProyecto2(rutaProyecto2.replace("'", ""));
+GraficaController.getInstance().addRutaProyecto1(rutaProyecto1.replace("'", ""));
+GraficaController.getInstance().addRutaProyecto2(rutaProyecto2.replace("'", ""));
+:};

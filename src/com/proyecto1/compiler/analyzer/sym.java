@@ -12,9 +12,9 @@ public class sym {
   public static final int LlaveInicio = 8;
   public static final int LlaveFinal = 9;
   public static final int ParentesisFinal = 7;
-  public static final int ERROR = 34;
-  public static final int Identificador = 33;
-  public static final int Ruta = 31;
+  public static final int ERROR = 30;
+  public static final int Identificador = 34;
+  public static final int Ruta = 33;
   public static final int Titulo = 24;
   public static final int PuntajeEspecifico = 17;
   public static final int EjeX = 26;
@@ -32,7 +32,7 @@ public class sym {
   public static final int EOF = 0;
   public static final int Dollar = 15;
   public static final int GraficaBarras = 20;
-  public static final int Decimal = 30;
+  public static final int Decimal = 31;
   public static final int Linea = 2;
   public static final int error = 1;
   public static final int Archivo = 25;
@@ -74,11 +74,11 @@ public class sym {
   "TituloX",
   "TituloY",
   "Valores",
+  "ERROR",
   "Decimal",
-  "Ruta",
   "Cadena",
-  "Identificador",
-  "ERROR"
+  "Ruta",
+  "Identificador"
   };
 }
 

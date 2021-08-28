@@ -15,6 +15,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java_cup.runtime.Symbol;
 
+import com.proyecto1.controller.VariableController;
+import com.proyecto1.controller.GraficaController;
+import com.proyecto1.model.Variable;
+
 /**
  *
  * @author jafb
@@ -45,7 +49,7 @@ public class EditorTexto extends javax.swing.JFrame {
 
         consola += " INICIANDO ANALISIS LEXICO\n";
         consola += "     LINEA \t" + String.format("%-40s", "TOKEN") + "\t" + "LEXEMA\n" ;
-
+        
         while (true) {
             Tokens token = lexer.yylex();
             formatoLinea = new Formatter();
@@ -163,7 +167,7 @@ public class EditorTexto extends javax.swing.JFrame {
                     break;
             }
             if(bandera) {
-                consola += "     " + formatoLinea + "\t" + String.format("%-40s", tipoToken) + "\t" + lexer.lexeme + "\n";
+                consola += "     " + formatoLinea + "\t" + String.format("%-40s", tipoToken) + "\t" + lexer.lexeme + "\n"; 
             }
             
         };
@@ -171,7 +175,9 @@ public class EditorTexto extends javax.swing.JFrame {
         return consola;
     }
     
-    private String analizadorSemantico() throws IOException {
+    private String analizadorSintactico() throws IOException {
+        VariableController.getInstance().limpiar();
+        GraficaController.getInstance().limpiar();
         String consola = "";
         JScrollPane panelTemp = (JScrollPane) jTabbedPane1.getSelectedComponent();
         JTextArea editorTemp = (JTextArea) panelTemp.getViewport().getView();
@@ -361,11 +367,11 @@ public class EditorTexto extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 826, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -373,7 +379,7 @@ public class EditorTexto extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -400,7 +406,7 @@ public class EditorTexto extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -437,7 +443,7 @@ public class EditorTexto extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 687, Short.MAX_VALUE)
+            .addGap(0, 689, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -459,8 +465,17 @@ public class EditorTexto extends javax.swing.JFrame {
         try {
             String consola = analizadorLexico();
             consola += "\n";
-            consola += analizadorSemantico();
+            consola += analizadorSintactico();
             txtConsola.setText(consola);    
+            
+            for (Variable variable: VariableController.getInstance().getLista()) {
+                if(variable.getPuntaje() != null) {
+                    System.out.println(variable.getPuntaje().getTipoPuntaje());
+                } else {
+                    System.out.println(variable.getValor());
+                }
+                
+            }
         } catch (IOException ex) {
             Logger.getLogger(EditorTexto.class.getName()).log(Level.SEVERE, null, ex);
         }

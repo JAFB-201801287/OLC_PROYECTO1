@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import com.proyecto1.controller.GraficaController;
 
 
 /**
@@ -30,8 +31,9 @@ public class main {
         String[] rutaS = {"-parser", "Sintax", "/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/Sintax.cup"};
         generar(ruta1, ruta2, rutaS);
         
-        EditorTexto editorTexto = new EditorTexto();
-        editorTexto.setVisible(true);
+        //EditorTexto editorTexto = new EditorTexto();
+        //editorTexto.setVisible(true);
+        System.out.println(GraficaController.getInstance().buscarFichero("/home/jafb/Documents/ARCHIVOS_ENTRADA", "PRUEBA1.js").getAbsolutePath());
        
     }
     
