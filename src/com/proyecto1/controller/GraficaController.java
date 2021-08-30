@@ -8,6 +8,7 @@ package com.proyecto1.controller;
 import com.proyecto1.model.Elemento;
 import com.proyecto1.model.Grafica;
 import com.proyecto1.model.Puntaje;
+import com.proyecto1.model.ReporteToken;
 import java.util.ArrayList;
 import java.io.File;
 
@@ -18,6 +19,7 @@ import java.io.File;
 public class GraficaController {
     private static GraficaController instancia = null;
     private ArrayList<Grafica> lista = new ArrayList<Grafica>();
+    private ArrayList<ReporteToken> listaTokens = new ArrayList<ReporteToken>();
     private Elemento<String> titulo;
     private Elemento<String> archivo;
     private Elemento<String> titulox;
@@ -37,37 +39,51 @@ public class GraficaController {
       }
       return instancia;
     }
-
-    public void add() {
-        //this.lista = lista;
-    }
-
-    public void addTitulo(String valor, String nombreVariable, int linea) {
-        this.titulo = new Elemento<String>("STRING", valor, nombreVariable, linea);
-    }
-
-    public void addArchivo(String valor, String nombreVariable, int linea) {
-        this.archivo = new Elemento<String>("STRING", valor, nombreVariable, linea);
-    }
-
-    public void addTitulox(String valor, String nombreVariable, int linea) {
-        this.titulox = new Elemento<String>("STRING", valor, nombreVariable, linea);
-    }
-
-    public void addTituloy(String valor, String nombreVariable, int linea) {
-        this.tituloy = new Elemento<String>("STRING", valor, nombreVariable, linea);
-    }
-
-    public void addEjeX(String valor, String nombreVariable, int linea) {
-        this.ejeX.add(new Elemento<String>("STRING", valor, nombreVariable, linea) );
+    
+    public void addToken(String lexema, String token, int linea) {
+        ReporteToken reporte = new ReporteToken(lexema, token, linea);
+        listaTokens.add(reporte);
     }
     
-    public void addValor(Double valor, String nombreVariable, int linea) {
-        this.valores.add(new Elemento<Double>("Double", valor, nombreVariable, linea) );
+    public String[][] getReporteToken() {
+        int tamanio = this.listaTokens.size();
+        String[][] temp = new String[tamanio][3];
+        
+        for (int i = 0; i < tamanio; i++) {
+            temp[i][0] = this.listaTokens.get(i).getLexema().toString();
+            temp[i][1] = this.listaTokens.get(i).getToken().toString();
+            temp[i][2] = "" + this.listaTokens.get(i).getLinea();
+        }
+        
+        return  temp;
+    }
+
+    public void addTitulo(String valor, String nombreVariable, int linea, int columna) {
+        this.titulo = new Elemento<String>("STRING", valor, nombreVariable, linea, columna);
+    }
+
+    public void addArchivo(String valor, String nombreVariable, int linea, int columna) {
+        this.archivo = new Elemento<String>("STRING", valor, nombreVariable, linea, columna);
+    }
+
+    public void addTitulox(String valor, String nombreVariable, int linea, int columna) {
+        this.titulox = new Elemento<String>("STRING", valor, nombreVariable, linea, columna);
+    }
+
+    public void addTituloy(String valor, String nombreVariable, int linea, int columna) {
+        this.tituloy = new Elemento<String>("STRING", valor, nombreVariable, linea, columna);
+    }
+
+    public void addEjeX(String valor, String nombreVariable, int linea, int columna) {
+        this.ejeX.add(new Elemento<String>("STRING", valor, nombreVariable, linea, columna) );
     }
     
-    public void addValor(Puntaje puntaje, int linea) {
-        this.valores.add(new Elemento<Double>("Double", puntaje, linea) );
+    public void addValor(Double valor, String nombreVariable, int linea, int columna) {
+        this.valores.add(new Elemento<Double>("Double", valor, nombreVariable, linea, columna) );
+    }
+    
+    public void addValor(Puntaje puntaje, int linea, int columna) {
+        this.valores.add(new Elemento<Double>("Double", puntaje, linea, columna) );
     }
     
     public void addRutaProyecto1(String rutaProyecto1) {
@@ -129,6 +145,7 @@ public class GraficaController {
  
     public void limpiar() {
         lista = new ArrayList<Grafica>();
+        listaTokens = new ArrayList<ReporteToken>();
         titulo = new Elemento<String>();
         archivo = new Elemento<String>();
         titulox = new Elemento<String>();

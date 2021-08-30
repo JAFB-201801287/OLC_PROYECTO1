@@ -18,6 +18,7 @@ import java_cup.runtime.Symbol;
 import com.proyecto1.controller.VariableController;
 import com.proyecto1.controller.GraficaController;
 import com.proyecto1.model.Variable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -28,6 +29,7 @@ public class EditorTexto extends javax.swing.JFrame {
     private int idPestana;
     private JTextArea editor;
     private JScrollPane panelEditor;
+    private DefaultTableModel modeloTabla;
 
     /**
      * Creates new form EditorTexto
@@ -36,9 +38,18 @@ public class EditorTexto extends javax.swing.JFrame {
         idPestana = 0;
         initComponents();
         crearPestana();
+        //initTable();
     }
     
-    private String analizadorLexico() throws IOException {
+    private void initTable() {
+        modeloTabla = new DefaultTableModel();
+        modeloTabla.addColumn("LEXEMA");
+        modeloTabla.addColumn("TOKEN");
+        modeloTabla.addColumn("LINEA");
+        tableLex.setModel(modeloTabla);
+    }
+    
+    private void analizadorLexico() throws IOException {
         int linea = 1;
         JScrollPane panelTemp = (JScrollPane) jTabbedPane1.getSelectedComponent();
         JTextArea editorTemp = (JTextArea) panelTemp.getViewport().getView();
@@ -48,7 +59,7 @@ public class EditorTexto extends javax.swing.JFrame {
         Formatter formatoLinea = new Formatter();
 
         consola += " INICIANDO ANALISIS LEXICO\n";
-        consola += "     LINEA \t" + String.format("%-40s", "TOKEN") + "\t" + "LEXEMA\n" ;
+        consola += "     LINEA \t "  + String.format("%-40s", "TOKEN") + "\t" + "LEXEMA\n" ;
         
         while (true) {
             Tokens token = lexer.yylex();
@@ -167,15 +178,22 @@ public class EditorTexto extends javax.swing.JFrame {
                     break;
             }
             if(bandera) {
-                consola += "     " + formatoLinea + "\t" + String.format("%-40s", tipoToken) + "\t" + lexer.lexeme + "\n"; 
+                //consola += "     " + formatoLinea + "\t" + String.format("%-40s", tipoToken) + "\t" + lexer.lexeme + "\n";
+                GraficaController.getInstance().addToken(lexer.lexeme, tipoToken, linea);
             }
             
         };
         consola += " FIN ANALISIS LEXICO\n";
-        return consola;
+        
+        tableLex.setModel(new javax.swing.table.DefaultTableModel(
+            GraficaController.getInstance().getReporteToken(),
+            new String [] {
+                "LEXEMA", "TOKEN", "LINEA"
+            }
+        ));
     }
     
-    private String analizadorSintactico() throws IOException {
+    private void analizadorSintactico() throws IOException {
         VariableController.getInstance().limpiar();
         GraficaController.getInstance().limpiar();
         String consola = "";
@@ -189,18 +207,15 @@ public class EditorTexto extends javax.swing.JFrame {
         Sintax sintax = new Sintax(new LexicoCup(new StringReader(tempText)));
         
         try {
-            // Metodo parse de nuestro archivo generado del sintactico.cup
             sintax.parse();
-            consola = "ANALISIS SINTACTICO REALIZADO CORRECTAMENTE.";
-
+            txtSintatico.setForeground(Color.GREEN);
+            txtSintatico.setText("ANALISIS SINTACTICO REALIZADO CORRECTAMENTE."); 
         } catch (Exception ex) {
-            // Se obtiene el simbolo que estamos analizando y se obtiene la fila(sym.right) y el s{imbolo con sym.value para especificar
-            // en donde se obtuvo el error sintactico
-            Symbol sym = sintax.getSimbolo();         
-            consola = "ERROR SINTACTICO. LINEA: " + (sym.right + 1) + ", TEXTO: \"" + sym.value + "\"";
+            Symbol sym = sintax.getSimbolo();     
+            txtSintatico.setForeground(Color.RED);
+            txtSintatico.setText("ERROR SINTACTICO. LINEA: " + (sym.right + 1) + ", TEXTO: \"" + sym.value + "\"");
         }
-        
-        return  consola;
+       
     }
     
     private void crearPestana() {
@@ -232,8 +247,15 @@ public class EditorTexto extends javax.swing.JFrame {
         jSplitPane2 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tableLex = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        txtConsola = new javax.swing.JTextArea();
+        txtSintatico = new javax.swing.JTextArea();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtLector = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -359,9 +381,32 @@ public class EditorTexto extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Ubuntu", 1, 25)); // NOI18N
         jLabel2.setText("CONSOLA");
 
-        txtConsola.setColumns(20);
-        txtConsola.setRows(5);
-        jScrollPane1.setViewportView(txtConsola);
+        tableLex.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "LEXEMA", "TOKEN", "LINEA"
+            }
+        ));
+        jScrollPane2.setViewportView(tableLex);
+
+        jLabel4.setText("ANALIZADOR SINTÁCTICO");
+
+        txtSintatico.setColumns(20);
+        txtSintatico.setRows(5);
+        jScrollPane1.setViewportView(txtSintatico);
+
+        jLabel5.setText("ANALIZADOR LÉXICO");
+
+        jLabel6.setText("LECTOR DE ARCHIVO");
+
+        txtLector.setColumns(20);
+        txtLector.setRows(5);
+        jScrollPane3.setViewportView(txtLector);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -370,17 +415,39 @@ public class EditorTexto extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 826, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                .addGap(35, 35, 35)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(44, 44, 44)
+                    .addComponent(jLabel5)
+                    .addContainerGap(559, Short.MAX_VALUE)))
         );
 
         jSplitPane2.setRightComponent(jPanel2);
@@ -406,7 +473,7 @@ public class EditorTexto extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -417,11 +484,13 @@ public class EditorTexto extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSplitPane2)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jSplitPane2))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -443,7 +512,7 @@ public class EditorTexto extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 689, Short.MAX_VALUE)
+            .addGap(0, 701, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -463,19 +532,9 @@ public class EditorTexto extends javax.swing.JFrame {
 
     private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
         try {
-            String consola = analizadorLexico();
-            consola += "\n";
-            consola += analizadorSintactico();
-            txtConsola.setText(consola);    
-            
-            for (Variable variable: VariableController.getInstance().getLista()) {
-                if(variable.getPuntaje() != null) {
-                    System.out.println(variable.getPuntaje().getTipoPuntaje());
-                } else {
-                    System.out.println(variable.getValor());
-                }
-                
-            }
+            analizadorLexico();
+            analizadorSintactico();   
+
         } catch (IOException ex) {
             Logger.getLogger(EditorTexto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -507,14 +566,21 @@ public class EditorTexto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton reportes;
-    private javax.swing.JTextArea txtConsola;
+    private javax.swing.JTable tableLex;
+    private javax.swing.JTextArea txtLector;
+    private javax.swing.JTextArea txtSintatico;
     // End of variables declaration//GEN-END:variables
 }

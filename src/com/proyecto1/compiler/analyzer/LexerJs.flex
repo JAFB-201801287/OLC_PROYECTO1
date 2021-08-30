@@ -1,8 +1,8 @@
 package com.proyecto1.compiler.analyzer;
-import static com.proyecto1.compiler.analyzer.Tokens.*;
+import static com.proyecto1.compiler.analyzer.TokensJs.*;
 %%
-%class Lexer
-%type Tokens
+%class LexerJs
+%type TokensJs
 
 /* CONSTANTES */
 L = [a-zA-Z_]+

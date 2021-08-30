@@ -15,12 +15,12 @@ public class Variable<T> extends  Elemento<T> {
         super();
     }
     
-    public Variable(String tipo,Puntaje puntaje, int line) {
-        super(tipo, puntaje, line);
+    public Variable(String tipo,Puntaje puntaje, int line, int columna) {
+        super(tipo, puntaje, line, columna);
     }
 
-    public Variable(String tipo, T valor, String nombreVariable, int linea) {
-        super(tipo, valor, nombreVariable, linea);
+    public Variable(String tipo, T valor, String nombreVariable, int linea, int columna) {
+        super(tipo, valor, nombreVariable, linea, columna);
     }
 
 }

@@ -34,18 +34,18 @@ public class VariableController {
         return lista;
     }
     
-    public void add(Double valor, String nombreVariable, int linea) {
-        Variable<Double> variable = new Variable<Double>("DOUBLE", valor, nombreVariable, linea);
+    public void add(Double valor, String nombreVariable, int linea, int columna) {
+        Variable<Double> variable = new Variable<Double>("DOUBLE", valor, nombreVariable, linea, columna);
         lista.add(variable);
     }
     
-    public void add(String valor, String nombreVariable, int linea) {
-        Variable<String> variable = new Variable<String>("STRING", valor, nombreVariable, linea);
+    public void add(String valor, String nombreVariable, int linea, int columna) {
+        Variable<String> variable = new Variable<String>("STRING", valor, nombreVariable, linea, columna);
         lista.add(variable);
     }
     
-    public void add(Puntaje puntaje, int linea) {
-        Variable<String> variable = new Variable<String>("DOUBLE", puntaje, linea);
+    public void add(Puntaje puntaje, int linea, int columna) {
+        Variable<String> variable = new Variable<String>("DOUBLE", puntaje, linea, columna);
         lista.add(variable);
     }
 

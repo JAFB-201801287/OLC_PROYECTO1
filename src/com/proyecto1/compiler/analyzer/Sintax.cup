@@ -18,7 +18,7 @@ parser code
 
     public Symbol getSimbolo(){
         return this.simbolo;
-}
+    }
 :};
 
 /* SIMBOLOS TERMINALES */
@@ -115,48 +115,48 @@ PUNTAJE_GENERAL ::= Dollar LlaveInicio PuntajeGeneral LlaveFinal {: puntaje = ne
 PUNTAJE_ESPECIFICO ::= Dollar LlaveInicio PuntajeEspecifico Coma Cadena:nombreArchivo Coma Cadena:valor Coma Cadena:identificador LlaveFinal {: puntaje = new Puntaje("PuntajeEspecifico", nombreArchivo, valor, identificador); :};
 
 // LISTA DE STRING
-LISTA_STRING ::= Cadena:valor Coma {: GraficaController.getInstance().addEjeX(valor.replace("\"",""), "", 0); :} LISTA_STRING
-               | Identificador:nombreVariable Coma {: GraficaController.getInstance().addEjeX("", nombreVariable, 0); :} LISTA_STRING
-               | Cadena:valor {: GraficaController.getInstance().addEjeX(valor.replace("\"",""), "", 0); :} 
-               | Identificador:nombreVariable {: GraficaController.getInstance().addEjeX("", nombreVariable, 0); :};
+LISTA_STRING ::= Cadena:valor Coma {: GraficaController.getInstance().addEjeX(valor.replace("\"",""), "", valorright, valorleft); :} LISTA_STRING
+               | Identificador:nombreVariable Coma {: GraficaController.getInstance().addEjeX("", nombreVariable, nombreVariableright, nombreVariableleft); :} LISTA_STRING
+               | Cadena:valor {: GraficaController.getInstance().addEjeX(valor.replace("\"",""), "", valorright, valorleft); :} 
+               | Identificador:nombreVariable {: GraficaController.getInstance().addEjeX("", nombreVariable, nombreVariableright, nombreVariableleft); :};
 
 // LISTA DE DOUBLE
-LISTA_DOUBLE ::= Decimal:valor Coma {: GraficaController.getInstance().addValor(Double.parseDouble(valor), "", 0); :} LISTA_DOUBLE
-               | PUNTAJE_GENERAL Coma {: GraficaController.getInstance().addValor(puntaje, 0); puntaje = null; :} LISTA_DOUBLE
-               | PUNTAJE_ESPECIFICO Coma {: GraficaController.getInstance().addValor(puntaje, 0); puntaje = null; :} LISTA_DOUBLE
-               | Identificador:nombreVariable Coma {: GraficaController.getInstance().addValor(0.0, nombreVariable, 0); :} LISTA_DOUBLE
-               | Decimal:valor {: GraficaController.getInstance().addValor(Double.parseDouble(valor), "", 0); :}
-               | PUNTAJE_GENERAL {: GraficaController.getInstance().addValor(puntaje, 0); puntaje = null; :}
-               | PUNTAJE_ESPECIFICO {: GraficaController.getInstance().addValor(puntaje, 0); puntaje = null;  :}
-               | Identificador:nombreVariable {: GraficaController.getInstance().addValor(0.0, nombreVariable, 0); :};
+LISTA_DOUBLE ::= Decimal:valor Coma {: GraficaController.getInstance().addValor(Double.parseDouble(valor), "", valorright, valorleft); :} LISTA_DOUBLE
+               | PUNTAJE_GENERAL:pg Coma {: GraficaController.getInstance().addValor(puntaje, pgright, pgleft); puntaje = null; :} LISTA_DOUBLE
+               | PUNTAJE_ESPECIFICO:pg Coma {: GraficaController.getInstance().addValor(puntaje, pgright, pgleft); puntaje = null; :} LISTA_DOUBLE
+               | Identificador:nombreVariable Coma {: GraficaController.getInstance().addValor(0.0, nombreVariable, nombreVariableright, nombreVariableleft); :} LISTA_DOUBLE
+               | Decimal:valor {: GraficaController.getInstance().addValor(Double.parseDouble(valor), "", valorright, valorleft); :}
+               | PUNTAJE_GENERAL:pg {: GraficaController.getInstance().addValor(puntaje, pgright, pgleft); puntaje = null; :}
+               | PUNTAJE_ESPECIFICO:pg {: GraficaController.getInstance().addValor(puntaje, pgright, pgleft); puntaje = null;  :}
+               | Identificador:nombreVariable {: GraficaController.getInstance().addValor(0.0, nombreVariable, nombreVariableright, nombreVariableleft); :};
 
 // TITULO
-TITULO ::= Titulo DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTitulo(valor.replace("\"",""), "", 0); :}
-         | Titulo DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTitulo("", nombreVariable, 0); :};
+TITULO ::= Titulo DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTitulo(valor.replace("\"",""), "", valorright, valorleft); :}
+         | Titulo DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTitulo("", nombreVariable, nombreVariableright, nombreVariableleft); :};
 
 // ARCHIVO
-ARCHIVO ::= Archivo DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addArchivo(valor.replace("\"",""), "", 0); :}
-          | Archivo DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addArchivo("", nombreVariable, 0); :};
+ARCHIVO ::= Archivo DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addArchivo(valor.replace("\"",""), "", valorright, valorleft); :}
+          | Archivo DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addArchivo("", nombreVariable, nombreVariableright, nombreVariableleft); :};
 
 // EJE X
 EJEX ::= EjeX DosPuntos CorcheteInicio LISTA_STRING CorcheteFinal PuntoComa; 
 
 // TITULO X
-TITULOX ::= TituloX DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTitulox(valor.replace("\"",""), "", 0); :}
-          | TituloX DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTitulox("", nombreVariable, 0); :};
+TITULOX ::= TituloX DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTitulox(valor.replace("\"",""), "", valorright, valorleft); :}
+          | TituloX DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTitulox("", nombreVariable, nombreVariableright, nombreVariableleft); :};
 
 // TITULO Y
-TITULOY ::= TituloY DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTituloy(valor.replace("\"",""), "", 0); :}
-          | TituloY DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTituloy("", nombreVariable, 0); :};
+TITULOY ::= TituloY DosPuntos Cadena:valor PuntoComa {: GraficaController.getInstance().addTituloy(valor.replace("\"",""), "", valorright, valorleft); :}
+          | TituloY DosPuntos Identificador:nombreVariable PuntoComa {: GraficaController.getInstance().addTituloy("", nombreVariable, nombreVariableright, nombreVariableleft); :};
 
 // VALORES
 VALORES ::= Valores DosPuntos CorcheteInicio LISTA_DOUBLE CorcheteFinal PuntoComa; 
 
 // DECLARAR VARIABLES
-DECLARAR_VARIABLE ::= STRING Identificador:nombreVariable Igual Cadena:valor PuntoComa {: VariableController.getInstance().add(valor.replace("\"",""), nombreVariable, 0); :} DECLARAR_VARIABLE 
-                    | DOUBLE Identificador:nombreVariable Igual Decimal:valor PuntoComa {: VariableController.getInstance().add(Double.parseDouble(valor), nombreVariable, 0); :} DECLARAR_VARIABLE
-                    | DOUBLE Identificador Igual PUNTAJE_GENERAL PuntoComa {: VariableController.getInstance().add(puntaje, 0); puntaje = null; :} DECLARAR_VARIABLE 
-                    | DOUBLE Identificador Igual PUNTAJE_ESPECIFICO PuntoComa {: VariableController.getInstance().add(puntaje, 0); puntaje = null; :} DECLARAR_VARIABLE
+DECLARAR_VARIABLE ::= STRING Identificador:nombreVariable Igual Cadena:valor PuntoComa {: VariableController.getInstance().add(valor.replace("\"",""), nombreVariable, nombreVariableright, nombreVariableleft); :} DECLARAR_VARIABLE 
+                    | DOUBLE Identificador:nombreVariable Igual Decimal:valor PuntoComa {: VariableController.getInstance().add(Double.parseDouble(valor), nombreVariable, nombreVariableright, nombreVariableleft); :} DECLARAR_VARIABLE
+                    | DOUBLE Identificador Igual PUNTAJE_GENERAL:pg PuntoComa {: VariableController.getInstance().add(puntaje, pgright, pgleft); puntaje = null; :} DECLARAR_VARIABLE 
+                    | DOUBLE Identificador Igual PUNTAJE_ESPECIFICO:pg PuntoComa {: VariableController.getInstance().add(puntaje, pgright, pgleft); puntaje = null; :} DECLARAR_VARIABLE
                     | LlaveFinal;
  
 // DEFINIR GLOBALES

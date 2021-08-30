@@ -14,6 +14,7 @@ public class Elemento<T> {
     T valor;
     String nombreVariable;
     int linea;
+    int columna;
     Puntaje puntaje;
 
     public Elemento() {
@@ -21,21 +22,24 @@ public class Elemento<T> {
         this.nombreVariable = "";
         this.linea = 0;
         this.puntaje = new Puntaje();
+        this.columna = 0;
     }
     
-    public Elemento(String tipo, Puntaje puntaje, int line) {
+    public Elemento(String tipo, Puntaje puntaje, int line, int columna) {
         this.tipo = tipo;
         this.nombreVariable = "";
         this.linea = 0;
         this.puntaje = puntaje;
+        this.columna = columna;
     }
 
 
-    public Elemento(String tipo, T valor, String nombreVariable, int linea) {
+    public Elemento(String tipo, T valor, String nombreVariable, int linea, int columna) {
         this.tipo = tipo;
         this.valor = valor;
         this.nombreVariable = nombreVariable;
         this.linea = linea;
+        this.columna = columna;
         this.puntaje = null;
     }
 

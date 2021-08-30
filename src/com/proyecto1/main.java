@@ -5,14 +5,13 @@
  */
 package com.proyecto1;
 
-import com.proyecto1.compiler.analyzer.EditorTexto;
 
+import com.proyecto1.compiler.analyzer.EditorTexto;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import com.proyecto1.controller.GraficaController;
 
 
 /**
@@ -26,20 +25,22 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception { 
+        String rutaJs1 = "/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/LexerJs.flex";
         String ruta1 = "/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/Lexer.flex";
         String ruta2 = "/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/LexerCup.flex";
         String[] rutaS = {"-parser", "Sintax", "/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/Sintax.cup"};
-        generar(ruta1, ruta2, rutaS);
+        generar(ruta1, ruta2, rutaS, rutaJs1);
         
-        //EditorTexto editorTexto = new EditorTexto();
-        //editorTexto.setVisible(true);
-        System.out.println(GraficaController.getInstance().buscarFichero("/home/jafb/Documents/ARCHIVOS_ENTRADA", "PRUEBA1.js").getAbsolutePath());
+        EditorTexto editorTexto = new EditorTexto();
+        editorTexto.setVisible(true);
        
     }
     
-    public static void generar(String ruta1, String ruta2, String[] rutaS) throws IOException, Exception{
+    public static void generar(String ruta1, String ruta2, String[] rutaS, String rutaJs1) throws IOException, Exception{
         File archivo;
         archivo = new File(ruta1);
+        JFlex.Main.generate(archivo);
+        archivo = new File(rutaJs1);
         JFlex.Main.generate(archivo);
         archivo = new File(ruta2);
         JFlex.Main.generate(archivo);
