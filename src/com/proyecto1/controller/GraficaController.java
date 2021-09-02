@@ -155,4 +155,12 @@ public class GraficaController {
         rutaProyecto1 = "";
         rutaProyecto2 = "";
     }
+    
+    public void iniciarGraficas() {
+        for (Grafica grafica : this.lista) {
+            if(grafica.getTitulo().getNombreVariable() != null && grafica.getTitulo().getNombreVariable() != "") {
+            
+            }
+        }
+    }
 }

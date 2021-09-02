@@ -1,0 +1,316 @@
+package com.proyecto1.compiler.analyzer.javascript;
+import java_cup.runtime.Symbol;
+
+/* METODO PARSER -> RETORNA EL SIMBOLO ANALIZADO */
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+
+parser code
+{:
+    private Symbol simbolo;
+    
+    public void syntax_error(Symbol simbolo){
+        this.simbolo = simbolo;
+    }
+
+    public Symbol getSimbolo(){
+        return this.simbolo;
+    }
+:};
+
+
+/* SIMBOLOS TERMINALES */
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+
+terminal Coma,
+         Igual,
+         ParentesisInicio,
+         ParentesisFinal,
+         LlaveInicio,
+         LlaveFinal,
+         PuntoComa,
+         DosPuntos,
+         OperadorIdentificador,
+         OperadorRelacional,
+         OperadorLogico,
+         OperadorLogicoNot,
+         OperadorAritmetico,
+         Clase,
+         Funcion,
+         Var, 
+         Let, 
+         Const,
+         If,
+         Else,
+         For,
+         Do,
+         While,
+         Switch,
+         Case,
+         Default,
+         Consola,
+         Break,
+         Break1,
+         Require,
+         BOOLEAN,
+         BOOLEAN1,
+         DOUBLE,
+         DOUBLE1,
+         INTEGER,
+         INTEGER1,
+         STRING,
+         STRING1;
+
+terminal String Identificador1, Identificador;
+
+/* SIMBOLOS NO TERMINALES */
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+
+non terminal INICIO,
+             BREAK,
+             REQUIRE,
+             TIPOS_DE_DATOS,
+             TIPOS_DE_DATOS1,
+             TIPOS_DE_DATOS2,
+             DECLARAR_CLASE,
+             INSTRUCCION,
+             CADENA_IDENTIFICADORES,
+             DECLARAR_METODO,
+             OPERADORES_ARITMETICOS,
+             OPERADORES_ARITMETICOS1,
+             OPERADORES_RELACIONALES,
+             OPERADORES_LOGICOS,
+             INSTRUCCION_METODO,
+             DECLARAR_VAR,
+             DECLARAR_LET,
+             DECLARAR_LET1,
+             DECLARAR_LET2,
+             DECLARAR_CONST,
+             FINALIZAR_DECLARACION,
+             IF,
+             INTRUCCION_IF,
+             ELSE,
+             INTRUCCION_ELSE,
+             ELSE_IF,
+             FOR,
+             INSTRUCCION_CICLOS,
+             WHILE,
+             SWITCH,
+             CASE,
+             DEFAULT,
+             INSTRUCCION_CASE,
+             INSTRUCCION_DEFAULT,
+             INSTRUCCION_SWITCH,
+             DO,
+             CONSOLA;
+
+precedence left Identificador;
+precedence left STRING, INTEGER, DOUBLE, BOOLEAN; 
+precedence left Identificador1;
+precedence left STRING1, INTEGER1, DOUBLE1, BOOLEAN1; 
+
+// SE DEFINI INICIO COMO PRIMER NO TERMINAL
+start with INICIO;
+
+/* PRODUCCIONES */
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+
+INICIO ::= DECLARAR_CLASE;
+
+// BREAK
+BREAK ::= Break1 
+        | Break PuntoComa;
+
+// REQUIRE
+REQUIRE ::= Require ParentesisInicio STRING ParentesisFinal PuntoComa 
+          | Require ParentesisInicio STRING ParentesisFinal;   
+
+// TIPOS DE DATOS
+TIPOS_DE_DATOS ::= BOOLEAN
+                 | DOUBLE
+                 | INTEGER
+                 | STRING
+                 | Identificador;
+
+// TIPOS DE DATOS FINALES
+TIPOS_DE_DATOS1 ::= BOOLEAN1
+                 | DOUBLE1
+                 | INTEGER1
+                 | STRING1
+                 | Identificador1;
+
+// TIPOS DE DATOS
+TIPOS_DE_DATOS2 ::= BOOLEAN
+                 | DOUBLE
+                 | INTEGER
+                 | STRING;
+
+// DECLARAR VAR
+DECLARAR_VAR ::= Var Identificador Igual FINALIZAR_DECLARACION 
+               | Identificador Igual FINALIZAR_DECLARACION
+               | Var Identificador Igual REQUIRE;
+
+// DECLARAR LET
+DECLARAR_LET ::= Let Identificador Igual FINALIZAR_DECLARACION 
+               | Identificador Igual FINALIZAR_DECLARACION
+               | Let Identificador Igual REQUIRE;
+
+DECLARAR_LET1 ::= Let Identificador Igual OPERADORES_ARITMETICOS 
+                | Identificador Igual OPERADORES_ARITMETICOS;
+
+// DECLARAR LET
+DECLARAR_LET2 ::= Let Identificador Igual FINALIZAR_DECLARACION 
+               | Let Identificador Igual REQUIRE;
+
+// DECLARAR CONST
+DECLARAR_CONST ::= Const Identificador Igual FINALIZAR_DECLARACION 
+                 | Const Identificador Igual REQUIRE;
+
+FINALIZAR_DECLARACION ::= OPERADORES_ARITMETICOS 
+                        | OPERADORES_ARITMETICOS PuntoComa;
+
+// DECLARARACION DE CLASE
+DECLARAR_CLASE ::= Clase Identificador LlaveInicio INSTRUCCION;
+
+// INSTRUCCIONES DE CLASE
+INSTRUCCION ::= DECLARAR_METODO INSTRUCCION 
+              | SWITCH INSTRUCCION 
+              | DO INSTRUCCION
+              | BREAK INSTRUCCION
+              | DECLARAR_VAR INSTRUCCION
+              | DECLARAR_LET2 INSTRUCCION
+              | DECLARAR_CONST INSTRUCCION
+              | FOR INSTRUCCION
+              | IF INSTRUCCION
+              | WHILE INSTRUCCION
+              | CONSOLA INSTRUCCION
+              | LlaveFinal
+              | LlaveFinal DECLARAR_CLASE;
+
+// CONSOLA
+CONSOLA ::= Consola ParentesisInicio STRING ParentesisFinal PuntoComa;
+
+// DECLARACION DE PARAMETROS DE METODO
+CADENA_IDENTIFICADORES::= Identificador Coma CADENA_IDENTIFICADORES;
+CADENA_IDENTIFICADORES::= Identificador ParentesisFinal;
+CADENA_IDENTIFICADORES::= ParentesisFinal;
+
+// DECLARARACION DE METODO
+DECLARAR_METODO ::= Identificador ParentesisInicio CADENA_IDENTIFICADORES LlaveInicio INSTRUCCION_METODO ;
+
+// INSTRUCCIONES DE METODO
+INSTRUCCION_METODO ::= CONSOLA INSTRUCCION_METODO 
+                     | SWITCH INSTRUCCION_METODO
+                     | DO INSTRUCCION_METODO
+                     | BREAK INSTRUCCION_METODO
+                     | DECLARAR_LET INSTRUCCION
+                     | FOR INSTRUCCION_METODO
+                     | IF INSTRUCCION_METODO
+                     | WHILE INSTRUCCION_METODO
+                     | LlaveFinal;
+
+// OPERADORES ARITMETICOS
+OPERADORES_ARITMETICOS ::= TIPOS_DE_DATOS OperadorAritmetico OPERADORES_ARITMETICOS
+                         | ParentesisInicio OPERADORES_ARITMETICOS ParentesisFinal
+                         | ParentesisInicio OPERADORES_ARITMETICOS ParentesisFinal OperadorAritmetico OPERADORES_ARITMETICOS
+                         | TIPOS_DE_DATOS
+                         | TIPOS_DE_DATOS1;
+
+// OPERADORES RELACIONALES
+OPERADORES_RELACIONALES ::= TIPOS_DE_DATOS OperadorRelacional TIPOS_DE_DATOS
+                          | TIPOS_DE_DATOS;
+
+// OPERADORES LOGICOS
+OPERADORES_LOGICOS ::= ParentesisInicio OPERADORES_LOGICOS  ParentesisFinal OperadorLogico OPERADORES_LOGICOS 
+                     | ParentesisInicio OPERADORES_LOGICOS  ParentesisFinal
+                     | OPERADORES_RELACIONALES OperadorLogico OPERADORES_LOGICOS
+                     | OperadorLogicoNot OPERADORES_LOGICOS
+                     | OPERADORES_RELACIONALES;
+
+// IF
+IF ::= If ParentesisInicio OPERADORES_LOGICOS ParentesisFinal LlaveInicio INTRUCCION_IF; 
+
+// INSTRUCCIONES IF
+INTRUCCION_IF ::= IF INTRUCCION_IF
+                | SWITCH INTRUCCION_IF
+                | DO INTRUCCION_IF
+                | BREAK INTRUCCION_IF
+                | DECLARAR_LET INTRUCCION_IF
+                | FOR INTRUCCION_IF
+                | CONSOLA INTRUCCION_IF
+                | WHILE INTRUCCION_IF
+                | LlaveFinal ELSE_IF
+                | LlaveFinal ELSE
+                | LlaveFinal;
+
+// ELSE
+ELSE ::= Else LlaveInicio INTRUCCION_ELSE;
+
+// INSTRUCCIONES ELSE
+INTRUCCION_ELSE ::= IF INTRUCCION_ELSE 
+                  | SWITCH INTRUCCION_ELSE
+                  | DO INTRUCCION_ELSE
+                  | BREAK INTRUCCION_ELSE
+                  | DECLARAR_LET INTRUCCION_ELSE
+                  | FOR INTRUCCION_ELSE
+                  | WHILE INTRUCCION_ELSE 
+                  | CONSOLA INTRUCCION_ELSE
+                  | LlaveFinal;
+// ELSE IF
+ELSE_IF ::= Else If ParentesisInicio OPERADORES_LOGICOS ParentesisFinal LlaveInicio INTRUCCION_IF;
+
+// FOR
+FOR ::= For ParentesisInicio DECLARAR_LET1 PuntoComa OPERADORES_LOGICOS PuntoComa Identificador OperadorIdentificador ParentesisFinal LlaveInicio INSTRUCCION_CICLOS;
+
+// WHILE
+WHILE ::= While ParentesisInicio OPERADORES_LOGICOS ParentesisFinal LlaveInicio INSTRUCCION_CICLOS;
+
+// DO
+DO ::= Do LlaveInicio INSTRUCCION_CICLOS While ParentesisInicio OPERADORES_LOGICOS ParentesisFinal
+     | Do LlaveInicio INSTRUCCION_CICLOS While ParentesisInicio OPERADORES_LOGICOS ParentesisFinal PuntoComa;
+
+// INSTRUCCIONES PARA LOS CICLOS
+INSTRUCCION_CICLOS ::= WHILE INSTRUCCION_CICLOS
+                    | SWITCH INSTRUCCION_CICLOS
+                    | DO INSTRUCCION_CICLOS
+                    | BREAK INSTRUCCION_CICLOS
+                    | DECLARAR_LET INSTRUCCION_CICLOS
+                    | FOR INSTRUCCION_CICLOS
+                    | CONSOLA INSTRUCCION_CICLOS
+                    | IF INSTRUCCION_CICLOS
+                    | LlaveFinal;
+
+// SWITCH
+SWITCH ::= Switch ParentesisInicio Identificador ParentesisFinal LlaveInicio INSTRUCCION_SWITCH;
+
+// INSTRUCCION SWITCH
+INSTRUCCION_SWITCH ::= CASE INSTRUCCION_SWITCH
+                     | DEFAULT INSTRUCCION_SWITCH
+                     | LlaveFinal;
+
+// CASE
+CASE ::= Case TIPOS_DE_DATOS2 DosPuntos INSTRUCCION_CASE;
+
+// DEFAULT
+DEFAULT::= Default DosPuntos INSTRUCCION_DEFAULT;
+
+// INSTRUCCIONES PARA CASE
+INSTRUCCION_CASE ::= CASE INSTRUCCION_CASE
+                   | WHILE INSTRUCCION_CASE
+                   | SWITCH INSTRUCCION_CASE
+                   | DO INSTRUCCION_CASE
+                   | DECLARAR_LET INSTRUCCION_CASE
+                   | FOR INSTRUCCION_CASE
+                   | CONSOLA INSTRUCCION_CASE
+                   | IF INSTRUCCION_CASE
+                   | BREAK;
+
+// INSTRUCCIONES PARA DEFAULT
+INSTRUCCION_DEFAULT ::= WHILE INSTRUCCION_DEFAULT
+                      | SWITCH INSTRUCCION_DEFAULT
+                      | DO INSTRUCCION_DEFAULT
+                      | DECLARAR_LET INSTRUCCION_DEFAULT
+                      | FOR INSTRUCCION_DEFAULT
+                      | CONSOLA INSTRUCCION_DEFAULT
+                      | IF INSTRUCCION_DEFAULT
+                      | BREAK;
+

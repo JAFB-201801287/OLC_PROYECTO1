@@ -7,6 +7,7 @@ package com.proyecto1.controller;
 
 import com.proyecto1.model.Puntaje;
 import com.proyecto1.model.Variable;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -20,7 +21,8 @@ public class VariableController {
     private String rutaProyecto2;
 
     public VariableController() {
-        
+        this.rutaProyecto1 = "";
+        this.rutaProyecto2 = "";
     }
     
     public static synchronized VariableController getInstance() {
@@ -63,4 +65,8 @@ public class VariableController {
         rutaProyecto2 = "";
     }
     
+    public void inicializarVariables() throws IOException {
+        ProyectoController.getInstance().addProyecto1(this.rutaProyecto1);
+        ProyectoController.getInstance().addProyecto2(this.rutaProyecto2);
+    }
 }
