@@ -16,7 +16,7 @@ espacio = [ ,\t,\r]+
 %%
 
 /* COMENTARIO MULTILINEA */
-( "/*"(.|\n)*"*/" ) {/*Ignore*/}
+( "/*"[^"/*"|"*/"]*"*/" ) {/*Ignore*/}
 
 /* ESPACIOS EN BLANCO */
 {espacio} {/*Ignore*/}

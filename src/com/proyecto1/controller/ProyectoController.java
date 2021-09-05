@@ -18,8 +18,15 @@ import com.proyecto1.compiler.analyzer.javascript.Sintax;
 import com.proyecto1.compiler.analyzer.javascript.Tokens;
 import com.proyecto1.compiler.analyzer.javascript.LexicoCup;
 import com.proyecto1.model.Archivo;
+import com.proyecto1.model.Clase1;
+import com.proyecto1.model.Metodo;
 import com.proyecto1.model.ReporteToken;
+import java.awt.Desktop;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.StringReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java_cup.runtime.Symbol;
 
@@ -33,12 +40,53 @@ public class ProyectoController {
     private Proyecto proyecto2;
     private boolean esProyecto1;
     private Archivo archivo;
+    private ArrayList<String> paramentros = new ArrayList<String>();
+    private boolean esMetodo = true;
+
+    public Proyecto getProyecto1() {
+        return proyecto1;
+    }
+
+    public Proyecto getProyecto2() {
+        return proyecto2;
+    }
     
     public static synchronized ProyectoController getInstance() {
       if(instancia == null) {
          instancia = new ProyectoController();
       }
       return instancia;
+    }
+
+    public void setParamentros(ArrayList<String> paramentros) {
+        if(this.esMetodo) {
+            for (String paramentro : paramentros) {
+                this.paramentros.add(paramentro); 
+            }
+        }
+        this.esMetodo = false;
+    }
+    
+    public void addClase(String identificador, ArrayList<String> metodos, int lineas) {
+        this.archivo.setClase(new Clase1(identificador, metodos, lineas));
+    }
+    
+    public void addMetodo(String identificador, int lineas) {
+        this.archivo.setMetodo(new Metodo(identificador, this.paramentros, lineas));
+        this.esMetodo = true;
+        this.paramentros = new ArrayList<String>();
+    }
+    
+    public void addVariable(String variable) {
+        if(!this.archivo.getVariable().contains(variable)) {
+            this.archivo.setVariable(variable);
+        }
+    }
+    
+    public void addComentario(String comentario) {
+        if(!this.archivo.getComentario().contains(comentario)) {
+            this.archivo.setComentario(comentario);
+        }
     }
 
     private void setEsProyecto1(boolean esProyecto1) {
@@ -71,6 +119,8 @@ public class ProyectoController {
                     }
                 } else {
                     if(f.getName().endsWith(".js")) {
+                        this.archivo = new Archivo();
+                        this.archivo.setNombre(f.getName());
                         lectorArchivo(f);
                     }
                 }
@@ -91,12 +141,13 @@ public class ProyectoController {
             temp += (linea + "\n");
         }
         
-        archivo = new Archivo();
-        analizadorLexico(temp, file);
-        analizadorSintatico(temp, file);
-        if(esProyecto1) {
+        if(this.esProyecto1) {
+            analizadorLexico(temp, file);
+            analizadorSintatico(temp, file);
             this.proyecto1.setArchivo(archivo);
         } else {
+            analizadorLexico(temp, file);
+            analizadorSintatico(temp, file);
             this.proyecto2.setArchivo(archivo);
         }
     }
@@ -106,8 +157,7 @@ public class ProyectoController {
         String consola = "";
         String tempText = texto.replace(",","#COMA8264#");
         Lexer lexer = new Lexer(new StringReader(tempText));
-        ArrayList<ReporteToken> listaTokens = new ArrayList<ReporteToken>();
-        archivo.setNombre(file.getName());
+        //ArrayList<ReporteToken> listaTokens = new ArrayList<ReporteToken>();
         
         while (true) {
             Tokens token = lexer.yylex();
@@ -224,14 +274,17 @@ public class ProyectoController {
                     break;
             }
             if(bandera) {
-                listaTokens.add(new ReporteToken(lexer.lexeme, tipoToken, linea));
+                if(this.esProyecto1) {
+                    this.proyecto1.setListaTokens(new ReporteToken(lexer.lexeme, tipoToken, linea, file.getName()));
+                } else {
+                    this.proyecto2.setListaTokens(new ReporteToken(lexer.lexeme, tipoToken, linea, file.getName()));
+                }
+                //listaTokens.add(new ReporteToken(lexer.lexeme, tipoToken, linea, file.getName()));
                 //System.out.println(linea + "\t" + String.format("%-40s", tipoToken) + "\t" + lexer.lexeme + "\n");
             }
         };
-        
-        archivo.setLineas(linea);
-        archivo.setListaTokens(listaTokens);
 
+        this.archivo.setLineas(linea);       
     }
     
     private void analizadorSintatico(String texto, File file) {
@@ -251,4 +304,114 @@ public class ProyectoController {
         }
     }
     
+    public void reporteTokens() {
+        String nombreArchivo = "REPORTE_TOKENS.html";
+        File file1 = new File(nombreArchivo);
+        BufferedWriter bw;
+        String html = "";
+        String body = "";
+        String head = "";
+        String container = "";
+        String contenido = "";
+        String footer = "";
+        DateTimeFormatter tiempo = DateTimeFormatter.ofPattern("yyyy/MMMM/dd HH:mm:ss");
+        
+        head += "    <div class=\"w3-top\">\n";
+        head += "        <div class=\"w3-row w3-padding w3-black\">\n";
+        head += "            <div class=\"w3-col s3\">\n";
+        head += "                <h4>PROYECTO 1</h4>\n";
+        head += "            </div>\n";
+        head += "        </div>\n";
+        head += "    </div>\n";
+        
+        contenido += "                <div class=\"w3-panel w3-leftbar w3-light-grey\">\n";
+        contenido += "                    <p>PROYECTO 1</p>\n";
+        contenido += "                    <p>DIRECCION: " + this.proyecto1.getDireccion() + "</p>\n";
+        contenido += "                </div>\n";
+        contenido += "                <table>\n";
+        contenido += "                    <tr>\n";
+        contenido += "                        <th>LEXEMA</th>\n";
+        contenido += "                        <th>TOKEN</th>\n";
+        contenido += "                        <th>LINEA</th>\n";
+        contenido += "                        <th>ARCHIVO</th>\n";
+        contenido += "                    </tr>\n";
+        
+
+        for (ReporteToken rt : this.proyecto1.getListaTokens()) {
+            contenido += "                    <tr>\n";
+            contenido += "                        <td>" + rt.getLexema() + "</td>\n";
+            contenido += "                        <td>" + rt.getToken() + "</td>\n";
+            contenido += "                        <td>" + rt.getLinea() + "</td>\n";
+            contenido += "                        <td>" + rt.getArchivo()+ "</td>\n";
+            contenido += "                    </tr>\n";
+        }
+
+        contenido += "                </table>\n";
+        
+        contenido += "                <div class=\"w3-panel w3-leftbar w3-light-grey\">\n";
+        contenido += "                    <p>PROYECTO 2</p>\n";
+        contenido += "                    <p>DIRECCION: " + this.proyecto2.getDireccion() + "</p>\n";
+        contenido += "                </div>\n";
+        contenido += "                <table>\n";
+        contenido += "                    <tr>\n";
+        contenido += "                        <th>LEXEMA</th>\n";
+        contenido += "                        <th>TOKEN</th>\n";
+        contenido += "                        <th>LINEA</th>\n";
+        contenido += "                        <th>ARCHIVO</th>\n";
+        contenido += "                    </tr>\n";
+        
+        for (ReporteToken rt : this.proyecto2.getListaTokens()) {
+            contenido += "                    <tr>\n";
+            contenido += "                        <td>" + rt.getLexema() + "</td>\n";
+            contenido += "                        <td>" + rt.getToken() + "</td>\n";
+            contenido += "                        <td>" + rt.getLinea() + "</td>\n";
+            contenido += "                        <td>" + rt.getArchivo() + "</td>\n";
+            contenido += "                    </tr>\n";
+        }
+        contenido += "                </table>\n";
+        
+        container += "       <div class=\"w3-container\" id=\"about\">\n";
+        container += "            <div class=\"w3-content\" style=\"max-width:700px\">\n";
+        container += "                <h5 class=\"w3-center w3-padding-64\"><span class=\"w3-tag w3-wide\">REPORTE DE TOKENS</span></h5>\n";
+        container += contenido;
+        container += "            </div>\n";
+        container += "        </div>\n";
+        container += "    </div>\n";
+        
+        footer += "    <footer class=\"w3-center w3-light-grey w3-padding-48 w3-large\">\n";
+        footer += "        <p>HECHO POR: <a href=\"#\" title=\"W3.CSS\" target=\"_blank\" class=\"w3-hover-text-green\">JOSE ANDRES FLORES BARCO - 201801287 - "  + tiempo.format(LocalDateTime.now()) + "</a></p>\n";
+        footer += "        <p><a href=\"#\" title=\"W3.CSS\" target=\"_blank\" class=\"w3-hover-text-green\">UNIVERSIDAD SAN CARLOS DE GUATEMALA</a></p>\n";
+        footer += "    </footer>\n";
+        
+        body += "<body>\n";
+        body += head;
+        body += container;
+        body += footer;
+        body += "</body>\n";
+        
+        html += "<!DOCTYPE html>\n";
+        html += "<html>\n";
+        html += "<title>REPORTE DE TOKENS</title>\n";
+        html += "<meta charset=\"UTF-8\">\n";
+        html += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n";
+        html += "<link rel=\"stylesheet\" href=\"w3.css\">\n";
+        html += "<link rel=\"stylesheet\" href=\"googleapis.css\">\n";
+        html += "<link rel=\"stylesheet\" href=\"template.css\">\n";
+        html += body;
+        html += "</html>\n";
+        
+        try {
+            if(file1.exists()) {
+                bw = new BufferedWriter(new FileWriter(nombreArchivo));
+                bw.write(html);
+            } else {
+                bw = new BufferedWriter(new FileWriter(nombreArchivo));
+                bw.write(html);
+            }
+            bw.close();
+            Desktop.getDesktop().browse(file1.toURI());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

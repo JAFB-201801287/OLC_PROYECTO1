@@ -20,12 +20,14 @@ public class sym {
   public static final int Default = 27;
   public static final int Var = 17;
   public static final int ParentesisFinal = 5;
+  public static final int Comentario = 43;
   public static final int LlaveInicio = 6;
   public static final int Else = 21;
   public static final int LlaveFinal = 7;
   public static final int INTEGER1 = 37;
   public static final int OperadorRelacional = 11;
   public static final int Break = 29;
+  public static final int ComentarioLinea = 42;
   public static final int OperadorAritmetico = 14;
   public static final int ParentesisInicio = 4;
   public static final int OperadorLogicoNot = 13;
@@ -92,7 +94,9 @@ public class sym {
   "STRING",
   "STRING1",
   "Identificador1",
-  "Identificador"
+  "Identificador",
+  "ComentarioLinea",
+  "Comentario"
   };
 }
 

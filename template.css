@@ -1,0 +1,32 @@
+body,
+html {
+    height: 100%;
+    font-family: "Inconsolata", sans-serif;
+}
+
+.bgimg {
+    background-position: center;
+    background-size: cover;
+    background-image: url("unnamed.jpg");
+    min-height: 75%;
+}
+
+.menu {
+    display: none;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }

@@ -44,12 +44,6 @@ espacio=[ ,\t,\r,\n]+
 /* ELEMENTOS IGNORADOS */
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 
-// IGNORAR COMENTARIO MULTILINEA
-( "/*"(.|\n)*"*/" ) {/*Ignore*/}
-
-/* IGNORAR COMENTARIOS */
-( "//"(.)* ) {/*Ignore*/}
-
 // IGNORAR ESPACIOS EN BLANCO Y SALTOS DE LINEA
 {espacio} {/*Ignore*/}
 
@@ -163,3 +157,9 @@ espacio=[ ,\t,\r,\n]+
 /* IDENTIFICADOR */
 ( {L}({L}|{D})* ) { return new Symbol(sym.Identificador, yychar, yyline, yytext()); }
 ( {L}({L}|{D})*[ ]*\n  ) { return new Symbol(sym.Identificador1, yychar, yyline, yytext()); }
+
+/* COMENTARIO DE UNA LINEA */
+( "//"(.)*\n ) { return new Symbol(sym.ComentarioLinea, yychar, yyline, yytext()); }
+
+// COMENTARIO MULTI LINEA
+( "/*"([^"/*"|"*/"]*)"*/" ) { return new Symbol(sym.Comentario, yychar, yyline, yytext()); }

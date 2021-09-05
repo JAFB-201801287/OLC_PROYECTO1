@@ -23,8 +23,12 @@ import com.proyecto1.compiler.analyzer.reporteria.Lexer;
 import com.proyecto1.compiler.analyzer.reporteria.Sintax;
 import com.proyecto1.compiler.analyzer.reporteria.Tokens;
 import com.proyecto1.compiler.analyzer.reporteria.LexicoCup;
-import java.awt.Image;
-import javax.swing.ImageIcon;
+import com.proyecto1.controller.ProyectoController;
+import com.proyecto1.model.Archivo;
+import com.proyecto1.model.Clase1;
+import com.proyecto1.model.Metodo;
+import com.proyecto1.model.Proyecto;
+import com.proyecto1.model.ReporteToken;
 
 /**
  *
@@ -80,7 +84,7 @@ public class EditorTexto extends javax.swing.JFrame {
             
             if (token == null) {
                 break;
-            }
+            } 
 
             switch (token) {
                 case Linea:
@@ -231,6 +235,28 @@ public class EditorTexto extends javax.swing.JFrame {
     
     private void analizadorSemantico() throws IOException {
         VariableController.getInstance().inicializarVariables();
+        
+        Proyecto proyecto = ProyectoController.getInstance().getProyecto1();
+        System.out.println("NOMBRE PROYECTO: " + proyecto.getDireccion());
+        
+        for (Archivo archivo : proyecto.getArchivos()) {
+            System.out.println("\tNOMBRE DE ARCHIVO: " + archivo.getNombre() + "\n");
+            for (Clase1 clase: archivo.getClase()) {
+                System.out.println("\tCLASE: " + clase.getIdentificador() + " LINEAS: " + clase.getLineas());
+                for (String metodo:clase.getMetodos()) {
+                    System.out.println("\t\tMETODO: " + metodo);
+                }
+            }
+            
+            System.out.println("");
+            for (Metodo metodo: archivo.getMetodo()) {
+                System.out.println("\tMETODO: " + metodo.getIdentificador() + " LINEAS: " + metodo.getLineas());
+                for (String parametos: metodo.getParamentros()) {
+                    System.out.println("\t\tPARAMETROS: " + parametos);
+                }
+            }
+           
+        }
     }
     
     private void crearPestana() {
@@ -261,8 +287,6 @@ public class EditorTexto extends javax.swing.JFrame {
         jSeparator3 = new javax.swing.JToolBar.Separator();
         ejecutar = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JToolBar.Separator();
-        reportes = new javax.swing.JButton();
-        jSeparator5 = new javax.swing.JToolBar.Separator();
         btnGuardar = new javax.swing.JButton();
         jSeparator6 = new javax.swing.JToolBar.Separator();
         btnGuardar1 = new javax.swing.JButton();
@@ -281,6 +305,16 @@ public class EditorTexto extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jToolBar2 = new javax.swing.JToolBar();
+        jSeparator8 = new javax.swing.JToolBar.Separator();
+        btnReporteToken = new javax.swing.JButton();
+        jSeparator9 = new javax.swing.JToolBar.Separator();
+        btnReporteError = new javax.swing.JButton();
+        jSeparator10 = new javax.swing.JToolBar.Separator();
+        btnReporteJson = new javax.swing.JButton();
+        jSeparator11 = new javax.swing.JToolBar.Separator();
+        btnReporteEstadistico = new javax.swing.JButton();
+        jSeparator12 = new javax.swing.JToolBar.Separator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(" PROYECTO 1 - FIUSAC COPY ANALYZER FIUSAC");
@@ -351,21 +385,6 @@ public class EditorTexto extends javax.swing.JFrame {
         });
         jToolBar1.add(ejecutar);
         jToolBar1.add(jSeparator4);
-
-        reportes.setFont(new java.awt.Font("Ubuntu Light", 0, 15)); // NOI18N
-        reportes.setText("REPORTES");
-        reportes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        reportes.setMargin(new java.awt.Insets(0, 20, 0, 20));
-        reportes.setMinimumSize(new java.awt.Dimension(150, 50));
-        reportes.setPreferredSize(new java.awt.Dimension(150, 50));
-        reportes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        reportes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reportesActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(reportes);
-        jToolBar1.add(jSeparator5);
 
         btnGuardar.setFont(new java.awt.Font("Ubuntu Light", 0, 15)); // NOI18N
         btnGuardar.setText("GUARDAR");
@@ -461,13 +480,13 @@ public class EditorTexto extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(44, 44, 44)
                     .addComponent(jLabel5)
-                    .addContainerGap(543, Short.MAX_VALUE)))
+                    .addContainerGap(497, Short.MAX_VALUE)))
         );
 
         jSplitPane2.setRightComponent(jPanel2);
@@ -493,22 +512,89 @@ public class EditorTexto extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jSplitPane2.setLeftComponent(jPanel3);
 
+        jToolBar2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jToolBar2.setRollover(true);
+        jToolBar2.setPreferredSize(new java.awt.Dimension(100, 50));
+        jToolBar2.add(jSeparator8);
+
+        btnReporteToken.setFont(new java.awt.Font("Ubuntu Light", 0, 15)); // NOI18N
+        btnReporteToken.setText("REPORTE DE TOKENS");
+        btnReporteToken.setFocusable(false);
+        btnReporteToken.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReporteToken.setMargin(new java.awt.Insets(0, 20, 0, 20));
+        btnReporteToken.setMinimumSize(new java.awt.Dimension(150, 50));
+        btnReporteToken.setPreferredSize(new java.awt.Dimension(150, 50));
+        btnReporteToken.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnReporteToken.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReporteTokenActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(btnReporteToken);
+        jToolBar2.add(jSeparator9);
+
+        btnReporteError.setFont(new java.awt.Font("Ubuntu Light", 0, 15)); // NOI18N
+        btnReporteError.setText("REPORTE DE ERRORES");
+        btnReporteError.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReporteError.setMargin(new java.awt.Insets(0, 20, 0, 20));
+        btnReporteError.setMinimumSize(new java.awt.Dimension(150, 50));
+        btnReporteError.setPreferredSize(new java.awt.Dimension(150, 50));
+        btnReporteError.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnReporteError.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReporteErrorActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(btnReporteError);
+        jToolBar2.add(jSeparator10);
+
+        btnReporteJson.setFont(new java.awt.Font("Ubuntu Light", 0, 15)); // NOI18N
+        btnReporteJson.setText("REPORTE JSON");
+        btnReporteJson.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReporteJson.setMargin(new java.awt.Insets(0, 20, 0, 20));
+        btnReporteJson.setMinimumSize(new java.awt.Dimension(150, 50));
+        btnReporteJson.setPreferredSize(new java.awt.Dimension(150, 50));
+        btnReporteJson.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnReporteJson.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReporteJsonActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(btnReporteJson);
+        jToolBar2.add(jSeparator11);
+
+        btnReporteEstadistico.setFont(new java.awt.Font("Ubuntu Light", 0, 15)); // NOI18N
+        btnReporteEstadistico.setText("REPORTE ESTADISTICO");
+        btnReporteEstadistico.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReporteEstadistico.setMargin(new java.awt.Insets(0, 20, 0, 20));
+        btnReporteEstadistico.setMinimumSize(new java.awt.Dimension(150, 50));
+        btnReporteEstadistico.setPreferredSize(new java.awt.Dimension(150, 50));
+        btnReporteEstadistico.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnReporteEstadistico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReporteEstadisticoActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(btnReporteEstadistico);
+        jToolBar2.add(jSeparator12);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jSplitPane2)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jToolBar1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jToolBar2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -517,6 +603,8 @@ public class EditorTexto extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSplitPane2)
                 .addContainerGap())
@@ -560,22 +648,38 @@ public class EditorTexto extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ejecutarActionPerformed
 
-    private void reportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportesActionPerformed
-        System.out.println("REPORTES");
-    }//GEN-LAST:event_reportesActionPerformed
-
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
+        ProyectoController.getInstance().reporteTokens();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnGuardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnGuardar1ActionPerformed
 
+    private void btnReporteErrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteErrorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnReporteErrorActionPerformed
+
+    private void btnReporteJsonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteJsonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnReporteJsonActionPerformed
+
+    private void btnReporteEstadisticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteEstadisticoActionPerformed
+        ProyectoController.getInstance().reporteTokens();
+    }//GEN-LAST:event_btnReporteEstadisticoActionPerformed
+
+    private void btnReporteTokenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteTokenActionPerformed
+        ProyectoController.getInstance().reporteTokens();
+    }//GEN-LAST:event_btnReporteTokenActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnArchivo;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnGuardar1;
+    private javax.swing.JButton btnReporteError;
+    private javax.swing.JButton btnReporteEstadistico;
+    private javax.swing.JButton btnReporteJson;
+    private javax.swing.JButton btnReporteToken;
     private javax.swing.JButton crearPestana;
     private javax.swing.JButton ejecutar;
     private javax.swing.JButton eliminarPestana;
@@ -592,16 +696,20 @@ public class EditorTexto extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator10;
+    private javax.swing.JToolBar.Separator jSeparator11;
+    private javax.swing.JToolBar.Separator jSeparator12;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
-    private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
+    private javax.swing.JToolBar.Separator jSeparator8;
+    private javax.swing.JToolBar.Separator jSeparator9;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JButton reportes;
+    private javax.swing.JToolBar jToolBar2;
     private javax.swing.JTable tableLex;
     private javax.swing.JTextArea txtLector;
     private javax.swing.JTextArea txtSintatico;

@@ -31,6 +31,14 @@ public class ReporteToken {
         this.columna = columna;
     }
 
+    public ReporteToken(String lexema, String token, int linea, String archivo) {
+        this.lexema = lexema;
+        this.token = token;
+        this.linea = linea;
+        this.columna = 0;
+        this.archivo = archivo;
+    }
+    
     public ReporteToken(String lexema, String token, int linea, int columna, String archivo) {
         this.lexema = lexema;
         this.token = token;

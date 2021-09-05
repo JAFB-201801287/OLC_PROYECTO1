@@ -26,7 +26,7 @@ public class main {
      */
     public static void main(String[] args) throws Exception { 
         //generar1();
-        generar2();
+        //generar2();
         
         EditorTexto editorTexto = new EditorTexto();
         editorTexto.setVisible(true);

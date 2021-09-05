@@ -1,5 +1,8 @@
 package com.proyecto1.compiler.analyzer.javascript;
 import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+
+import com.proyecto1.controller.ProyectoController;
 
 /* METODO PARSER -> RETORNA EL SIMBOLO ANALIZADO */
 /*----------------------------------------------------------------------------------------------------------------------------------*/
@@ -7,6 +10,12 @@ import java_cup.runtime.Symbol;
 parser code
 {:
     private Symbol simbolo;
+    private String nombreClase;
+    private int lineaClase;
+    private int lineaMetodo;
+    private String nombreMetodo;
+    private ArrayList<String> listaMetodos = new ArrayList<String>();
+    private ArrayList<String> parametros = new ArrayList<String>();
     
     public void syntax_error(Symbol simbolo){
         this.simbolo = simbolo;
@@ -60,23 +69,25 @@ terminal Coma,
          STRING,
          STRING1;
 
-terminal String Identificador1, Identificador;
+terminal String Identificador1, Identificador, ComentarioLinea, Comentario;
 
 /* SIMBOLOS NO TERMINALES */
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 
 non terminal INICIO,
+             COMENTARIO,
              BREAK,
              REQUIRE,
              TIPOS_DE_DATOS,
              TIPOS_DE_DATOS1,
              TIPOS_DE_DATOS2,
+             TIPOS_DE_DATOS3,
              DECLARAR_CLASE,
              INSTRUCCION,
              CADENA_IDENTIFICADORES,
              DECLARAR_METODO,
+             LLAMAR_METODO,
              OPERADORES_ARITMETICOS,
-             OPERADORES_ARITMETICOS1,
              OPERADORES_RELACIONALES,
              OPERADORES_LOGICOS,
              INSTRUCCION_METODO,
@@ -107,6 +118,7 @@ precedence left Identificador;
 precedence left STRING, INTEGER, DOUBLE, BOOLEAN; 
 precedence left Identificador1;
 precedence left STRING1, INTEGER1, DOUBLE1, BOOLEAN1; 
+precedence left ComentarioLinea, Comentario; 
 
 // SE DEFINI INICIO COMO PRIMER NO TERMINAL
 start with INICIO;
@@ -114,7 +126,14 @@ start with INICIO;
 /* PRODUCCIONES */
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 
-INICIO ::= DECLARAR_CLASE;
+INICIO ::= DECLARAR_CLASE INICIO
+         | COMENTARIO INICIO
+         | DECLARAR_CLASE
+         | COMENTARIO;
+
+// COMENTARIO
+COMENTARIO ::= ComentarioLinea:c {: ProyectoController.getInstance().addComentario(c); :}
+             | Comentario:c {: ProyectoController.getInstance().addComentario(c); :};
 
 // BREAK
 BREAK ::= Break1 
@@ -133,46 +152,47 @@ TIPOS_DE_DATOS ::= BOOLEAN
 
 // TIPOS DE DATOS FINALES
 TIPOS_DE_DATOS1 ::= BOOLEAN1
-                 | DOUBLE1
-                 | INTEGER1
-                 | STRING1
-                 | Identificador1;
+                  | DOUBLE1
+                  | INTEGER1
+                  | STRING1
+                  | Identificador1;
 
 // TIPOS DE DATOS
 TIPOS_DE_DATOS2 ::= BOOLEAN
-                 | DOUBLE
-                 | INTEGER
-                 | STRING;
+                  | DOUBLE
+                  | INTEGER
+                  | STRING;
 
 // DECLARAR VAR
-DECLARAR_VAR ::= Var Identificador Igual FINALIZAR_DECLARACION 
-               | Identificador Igual FINALIZAR_DECLARACION
-               | Var Identificador Igual REQUIRE;
+DECLARAR_VAR ::= Var Identificador:v Igual FINALIZAR_DECLARACION {: ProyectoController.getInstance().addVariable(v); :}
+               | Identificador:v Igual FINALIZAR_DECLARACION {: ProyectoController.getInstance().addVariable(v); :}
+               | Var Identificador:v Igual REQUIRE {: ProyectoController.getInstance().addVariable(v); :};
 
 // DECLARAR LET
-DECLARAR_LET ::= Let Identificador Igual FINALIZAR_DECLARACION 
-               | Identificador Igual FINALIZAR_DECLARACION
-               | Let Identificador Igual REQUIRE;
+DECLARAR_LET ::= Let Identificador:v Igual FINALIZAR_DECLARACION {: ProyectoController.getInstance().addVariable(v); :}
+               | Identificador:v Igual FINALIZAR_DECLARACION {: ProyectoController.getInstance().addVariable(v); :}
+               | Let Identificador:v Igual REQUIRE {: ProyectoController.getInstance().addVariable(v); :};
 
-DECLARAR_LET1 ::= Let Identificador Igual OPERADORES_ARITMETICOS 
-                | Identificador Igual OPERADORES_ARITMETICOS;
+DECLARAR_LET1 ::= Let Identificador:v Igual OPERADORES_ARITMETICOS {: ProyectoController.getInstance().addVariable(v); :}
+                | Identificador:v Igual OPERADORES_ARITMETICOS {: ProyectoController.getInstance().addVariable(v); :};
 
 // DECLARAR LET
-DECLARAR_LET2 ::= Let Identificador Igual FINALIZAR_DECLARACION 
-               | Let Identificador Igual REQUIRE;
+DECLARAR_LET2 ::= Let Identificador:v Igual FINALIZAR_DECLARACION {: ProyectoController.getInstance().addVariable(v); :}
+               | Let Identificador:v Igual REQUIRE {: ProyectoController.getInstance().addVariable(v); :};
 
 // DECLARAR CONST
-DECLARAR_CONST ::= Const Identificador Igual FINALIZAR_DECLARACION 
-                 | Const Identificador Igual REQUIRE;
+DECLARAR_CONST ::= Const Identificador:v Igual FINALIZAR_DECLARACION {: ProyectoController.getInstance().addVariable(v); :}
+                 | Const Identificador:v Igual REQUIRE {: ProyectoController.getInstance().addVariable(v); :};
 
 FINALIZAR_DECLARACION ::= OPERADORES_ARITMETICOS 
                         | OPERADORES_ARITMETICOS PuntoComa;
 
 // DECLARARACION DE CLASE
-DECLARAR_CLASE ::= Clase Identificador LlaveInicio INSTRUCCION;
+DECLARAR_CLASE ::= Clase:lf Identificador:c LlaveInicio {: nombreClase = c; lineaClase = lfright; :} INSTRUCCION;
 
 // INSTRUCCIONES DE CLASE
 INSTRUCCION ::= DECLARAR_METODO INSTRUCCION 
+              | LLAMAR_METODO INSTRUCCION
               | SWITCH INSTRUCCION 
               | DO INSTRUCCION
               | BREAK INSTRUCCION
@@ -183,22 +203,34 @@ INSTRUCCION ::= DECLARAR_METODO INSTRUCCION
               | IF INSTRUCCION
               | WHILE INSTRUCCION
               | CONSOLA INSTRUCCION
-              | LlaveFinal
-              | LlaveFinal DECLARAR_CLASE;
+              | COMENTARIO INSTRUCCION
+              | LlaveFinal:lf {: ProyectoController.getInstance().addClase(nombreClase, listaMetodos, lfright - lineaClase); listaMetodos = new ArrayList<String>(); nombreClase = ""; :};
+
 
 // CONSOLA
 CONSOLA ::= Consola ParentesisInicio STRING ParentesisFinal PuntoComa;
 
 // DECLARACION DE PARAMETROS DE METODO
-CADENA_IDENTIFICADORES::= Identificador Coma CADENA_IDENTIFICADORES;
-CADENA_IDENTIFICADORES::= Identificador ParentesisFinal;
-CADENA_IDENTIFICADORES::= ParentesisFinal;
+CADENA_IDENTIFICADORES ::= Identificador:p {: if(true) parametros.add(p); :} Coma CADENA_IDENTIFICADORES
+                         | Identificador:p {: parametros.add(p); :} ParentesisFinal
+                         | TIPOS_DE_DATOS2 Coma CADENA_IDENTIFICADORES
+                         | TIPOS_DE_DATOS2 ParentesisFinal
+                         | ParentesisFinal;
 
 // DECLARARACION DE METODO
-DECLARAR_METODO ::= Identificador ParentesisInicio CADENA_IDENTIFICADORES LlaveInicio INSTRUCCION_METODO ;
+DECLARAR_METODO ::= Identificador:m ParentesisInicio CADENA_IDENTIFICADORES LlaveInicio {: 
+                    listaMetodos.add(m); nombreMetodo = m; lineaMetodo = mright;
+                    ProyectoController.getInstance().setParamentros(parametros);
+                    parametros = new ArrayList<String>(); :} 
+                    INSTRUCCION_METODO ;
+
+// LLAMAR METODO
+LLAMAR_METODO ::= Identificador ParentesisInicio CADENA_IDENTIFICADORES {: parametros = new ArrayList<String>(); :}
+                | Identificador ParentesisInicio CADENA_IDENTIFICADORES PuntoComa {: parametros = new ArrayList<String>(); :};
 
 // INSTRUCCIONES DE METODO
 INSTRUCCION_METODO ::= CONSOLA INSTRUCCION_METODO 
+                     | LLAMAR_METODO INSTRUCCION_METODO 
                      | SWITCH INSTRUCCION_METODO
                      | DO INSTRUCCION_METODO
                      | BREAK INSTRUCCION_METODO
@@ -206,7 +238,8 @@ INSTRUCCION_METODO ::= CONSOLA INSTRUCCION_METODO
                      | FOR INSTRUCCION_METODO
                      | IF INSTRUCCION_METODO
                      | WHILE INSTRUCCION_METODO
-                     | LlaveFinal;
+                     | COMENTARIO INSTRUCCION_METODO
+                     | LlaveFinal:lf  {: ProyectoController.getInstance().addMetodo(nombreMetodo, lfright - lineaMetodo); parametros = new ArrayList<String>(); nombreMetodo = ""; :};
 
 // OPERADORES ARITMETICOS
 OPERADORES_ARITMETICOS ::= TIPOS_DE_DATOS OperadorAritmetico OPERADORES_ARITMETICOS
@@ -231,6 +264,7 @@ IF ::= If ParentesisInicio OPERADORES_LOGICOS ParentesisFinal LlaveInicio INTRUC
 
 // INSTRUCCIONES IF
 INTRUCCION_IF ::= IF INTRUCCION_IF
+                | LLAMAR_METODO INTRUCCION_IF
                 | SWITCH INTRUCCION_IF
                 | DO INTRUCCION_IF
                 | BREAK INTRUCCION_IF
@@ -238,6 +272,7 @@ INTRUCCION_IF ::= IF INTRUCCION_IF
                 | FOR INTRUCCION_IF
                 | CONSOLA INTRUCCION_IF
                 | WHILE INTRUCCION_IF
+                | COMENTARIO INTRUCCION_IF
                 | LlaveFinal ELSE_IF
                 | LlaveFinal ELSE
                 | LlaveFinal;
@@ -247,6 +282,7 @@ ELSE ::= Else LlaveInicio INTRUCCION_ELSE;
 
 // INSTRUCCIONES ELSE
 INTRUCCION_ELSE ::= IF INTRUCCION_ELSE 
+                  | LLAMAR_METODO INTRUCCION_ELSE
                   | SWITCH INTRUCCION_ELSE
                   | DO INTRUCCION_ELSE
                   | BREAK INTRUCCION_ELSE
@@ -254,6 +290,7 @@ INTRUCCION_ELSE ::= IF INTRUCCION_ELSE
                   | FOR INTRUCCION_ELSE
                   | WHILE INTRUCCION_ELSE 
                   | CONSOLA INTRUCCION_ELSE
+                  | COMENTARIO INTRUCCION_ELSE
                   | LlaveFinal;
 // ELSE IF
 ELSE_IF ::= Else If ParentesisInicio OPERADORES_LOGICOS ParentesisFinal LlaveInicio INTRUCCION_IF;
@@ -270,6 +307,7 @@ DO ::= Do LlaveInicio INSTRUCCION_CICLOS While ParentesisInicio OPERADORES_LOGIC
 
 // INSTRUCCIONES PARA LOS CICLOS
 INSTRUCCION_CICLOS ::= WHILE INSTRUCCION_CICLOS
+                    | LLAMAR_METODO INSTRUCCION_CICLOS
                     | SWITCH INSTRUCCION_CICLOS
                     | DO INSTRUCCION_CICLOS
                     | BREAK INSTRUCCION_CICLOS
@@ -277,6 +315,7 @@ INSTRUCCION_CICLOS ::= WHILE INSTRUCCION_CICLOS
                     | FOR INSTRUCCION_CICLOS
                     | CONSOLA INSTRUCCION_CICLOS
                     | IF INSTRUCCION_CICLOS
+                    | COMENTARIO INSTRUCCION_CICLOS
                     | LlaveFinal;
 
 // SWITCH
@@ -285,6 +324,7 @@ SWITCH ::= Switch ParentesisInicio Identificador ParentesisFinal LlaveInicio INS
 // INSTRUCCION SWITCH
 INSTRUCCION_SWITCH ::= CASE INSTRUCCION_SWITCH
                      | DEFAULT INSTRUCCION_SWITCH
+                     | COMENTARIO INSTRUCCION_SWITCH
                      | LlaveFinal;
 
 // CASE
@@ -295,6 +335,7 @@ DEFAULT::= Default DosPuntos INSTRUCCION_DEFAULT;
 
 // INSTRUCCIONES PARA CASE
 INSTRUCCION_CASE ::= CASE INSTRUCCION_CASE
+                   | LLAMAR_METODO INSTRUCCION_CASE
                    | WHILE INSTRUCCION_CASE
                    | SWITCH INSTRUCCION_CASE
                    | DO INSTRUCCION_CASE
@@ -302,15 +343,18 @@ INSTRUCCION_CASE ::= CASE INSTRUCCION_CASE
                    | FOR INSTRUCCION_CASE
                    | CONSOLA INSTRUCCION_CASE
                    | IF INSTRUCCION_CASE
+                   | COMENTARIO INSTRUCCION_CASE
                    | BREAK;
 
 // INSTRUCCIONES PARA DEFAULT
 INSTRUCCION_DEFAULT ::= WHILE INSTRUCCION_DEFAULT
+                      | LLAMAR_METODO INSTRUCCION_DEFAULT
                       | SWITCH INSTRUCCION_DEFAULT
                       | DO INSTRUCCION_DEFAULT
                       | DECLARAR_LET INSTRUCCION_DEFAULT
                       | FOR INSTRUCCION_DEFAULT
                       | CONSOLA INSTRUCCION_DEFAULT
                       | IF INSTRUCCION_DEFAULT
+                      | COMENTARIO INSTRUCCION_DEFAULT
                       | BREAK;
 

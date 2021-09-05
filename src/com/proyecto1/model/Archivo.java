@@ -13,33 +13,50 @@ import java.util.ArrayList;
  */
 public class Archivo {
     private String nombre;
-    private Elemento<String> clase;
-    private Elemento<String> metodo;
-    private Elemento<String> funcion;
-    private Elemento<String> comentario;
-    private ArrayList<ReporteToken> listaTokens;
+    private ArrayList<Clase1> clase;
+    private ArrayList<Metodo> metodo;
+    private ArrayList<String> variable;
+    private ArrayList<String> comentario;
     private int lineas;
     
 
     public Archivo() {
         this.nombre = "";
-        this.clase = new Elemento<String>();
-        this.metodo = new Elemento<String>();
-        this.funcion = new Elemento<String>();
-        this.comentario = new Elemento<String>();
-        this.listaTokens = new ArrayList<ReporteToken>();
+        this.clase = new ArrayList<Clase1>();
+        this.metodo = new ArrayList<Metodo>();
+        this.variable = new ArrayList<String>();
+        this.comentario = new ArrayList<String>();
+        this.lineas = 0;
+    }
+    
+    public Archivo(ArrayList<ReporteToken> listaTokens) {
+        this.nombre = "";
+        this.clase = new ArrayList<Clase1>();
+        this.metodo = new ArrayList<Metodo>();
+        this.variable = new ArrayList<String>();
+        this.comentario = new ArrayList<String>();
         this.lineas = 0;
     }
 
-    public Archivo(String nombre, Elemento<String> clase, Elemento<String> metodo, Elemento<String> funcion, Elemento<String> comentario, int lineas) {
+    public Archivo(String nombre, ArrayList<Clase1> clase, ArrayList<Metodo> metodo, ArrayList<String> funcion, ArrayList<String> comentario, int lineas) {
         this.nombre = nombre;
         this.clase = clase;
         this.metodo = metodo;
-        this.funcion = funcion;
+        this.variable = funcion;
         this.comentario = comentario;
-        this.listaTokens = new ArrayList<ReporteToken>();
         this.lineas = lineas;
     }
+
+    public Archivo(String nombre, ArrayList<Clase1> clase, ArrayList<Metodo> metodo, ArrayList<String> variable, ArrayList<String> comentario, ArrayList<ReporteToken> listaTokens, int lineas) {
+        this.nombre = nombre;
+        this.clase = clase;
+        this.metodo = metodo;
+        this.variable = variable;
+        this.comentario = comentario;
+        this.lineas = lineas;
+    }
+    
+    
 
     public String getNombre() {
         return nombre;
@@ -49,44 +66,36 @@ public class Archivo {
         this.nombre = nombre;
     }
 
-    public Elemento<String> getClase() {
+    public ArrayList<Clase1> getClase() {
         return clase;
     }
 
-    public void setClase(Elemento<String> clase) {
-        this.clase = clase;
+    public void setClase(Clase1 clase) {
+        this.clase.add(clase);
     }
 
-    public Elemento<String> getMetodo() {
+    public ArrayList<Metodo> getMetodo() {
         return metodo;
     }
 
-    public void setMetodo(Elemento<String> metodo) {
-        this.metodo = metodo;
+    public void setMetodo(Metodo metodo) {
+        this.metodo.add(metodo);
     }
 
-    public Elemento<String> getFuncion() {
-        return funcion;
+    public ArrayList<String> getFuncion() {
+        return variable;
     }
 
-    public void setFuncion(Elemento<String> funcion) {
-        this.funcion = funcion;
+    public void setFuncion(String funcion) {
+        this.variable.add(funcion);
     }
 
-    public Elemento<String> getComentario() {
+    public ArrayList<String> getComentario() {
         return comentario;
     }
 
-    public void setComentario(Elemento<String> comentario) {
-        this.comentario = comentario;
-    }
-
-    public ArrayList<ReporteToken> getListaTokens() {
-        return listaTokens;
-    }
-
-    public void setListaTokens(ArrayList<ReporteToken> listaTokens) {
-        this.listaTokens = listaTokens;
+    public void setComentario(String comentario) {
+        this.comentario.add(comentario);
     }
 
     public int getLineas() {
@@ -96,6 +105,17 @@ public class Archivo {
     public void setLineas(int lineas) {
         this.lineas = lineas;
     }
+
+    public ArrayList<String> getVariable() {
+        return variable;
+    }
+
+    public void setVariable(ArrayList<String> variable) {
+        this.variable = variable;
+    }
     
+    public void setVariable(String variable) {
+        this.variable.add(variable);
+    }
     
 }
