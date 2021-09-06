@@ -3,14 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/model/Metodo.java</file>
+            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/model/Grafica.java</file>
             <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/view/EditorTexto.java</file>
-            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/javascript/Sintax.cup</file>
+            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/model/Variable.java</file>
+            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/controller/VariableController.java</file>
             <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/controller/ProyectoController.java</file>
-            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/reporteria/Lexer.flex</file>
+            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/model/Elemento.java</file>
             <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/main.java</file>
-            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/compiler/analyzer/javascript/LexerCup.flex</file>
-            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/model/Archivo.java</file>
+            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/controller/GraficaController.java</file>
+            <file>file:/home/jafb/NetBeansProjects/OLC_PROYECTO1/src/com/proyecto1/model/Proyecto.java</file>
         </group>
     </open-files>
 </project-private>

@@ -120,4 +120,14 @@ public class Grafica {
     public void setValores(ArrayList<Elemento<Double>> valores) {
         this.valores = valores;
     }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    
+    
 }

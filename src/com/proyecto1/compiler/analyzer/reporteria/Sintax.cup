@@ -156,8 +156,8 @@ VALORES ::= Valores DosPuntos CorcheteInicio LISTA_DOUBLE CorcheteFinal PuntoCom
 // DECLARAR VARIABLES
 DECLARAR_VARIABLE ::= STRING Identificador:nombreVariable Igual Cadena:valor PuntoComa {: VariableController.getInstance().add(valor.replace("\"",""), nombreVariable, nombreVariableright, nombreVariableleft); :} DECLARAR_VARIABLE 
                     | DOUBLE Identificador:nombreVariable Igual Decimal:valor PuntoComa {: VariableController.getInstance().add(Double.parseDouble(valor), nombreVariable, nombreVariableright, nombreVariableleft); :} DECLARAR_VARIABLE
-                    | DOUBLE Identificador Igual PUNTAJE_GENERAL:pg PuntoComa {: VariableController.getInstance().add(puntaje, pgright, pgleft); puntaje = null; :} DECLARAR_VARIABLE 
-                    | DOUBLE Identificador Igual PUNTAJE_ESPECIFICO:pg PuntoComa {: VariableController.getInstance().add(puntaje, pgright, pgleft); puntaje = null; :} DECLARAR_VARIABLE
+                    | DOUBLE Identificador:nombreVariable Igual PUNTAJE_GENERAL:pg PuntoComa {: VariableController.getInstance().add(puntaje, nombreVariable, pgright, pgleft); puntaje = null; :} DECLARAR_VARIABLE 
+                    | DOUBLE Identificador:nombreVariable Igual PUNTAJE_ESPECIFICO:pg PuntoComa {: VariableController.getInstance().add(puntaje, nombreVariable, pgright, pgleft); puntaje = null; :} DECLARAR_VARIABLE
                     | LlaveFinal;
  
 // DEFINIR GLOBALES

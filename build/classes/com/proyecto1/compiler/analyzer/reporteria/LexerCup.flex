@@ -57,7 +57,7 @@ espacio=[ ,\t,\r,\n]+
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 
 // COMA
-( "<COMA8264>" ) { return new Symbol(sym.Coma, yychar, yyline, yytext()); }
+( "," ) { return new Symbol(sym.Coma, yychar, yyline, yytext()); }
 
 // TIPOS DE DATO STRING
 ( [S|s][T|t][R|r][I|i][N|n][G|g] ) {return new Symbol(sym.STRING, yychar, yyline, yytext());}

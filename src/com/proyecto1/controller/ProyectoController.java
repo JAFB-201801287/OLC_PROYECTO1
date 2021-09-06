@@ -287,6 +287,220 @@ public class ProyectoController {
         this.archivo.setLineas(linea);       
     }
     
+    public double puntajeGeneral() {
+        double puntaje = 0;
+        int cantidadClases = 0;
+        int cantidadVariables = 0;
+        int cantidadComentarios = 0;
+        int cantidadMetodos = 0;
+        
+        double puntajeClase = 0;
+        double puntajeVariable = 0;
+        double puntajeComentario = 0;
+        double puntajeMetodo = 0;
+        
+        for (Archivo a1: this.proyecto1.getArchivos()) {
+            cantidadClases += a1.getClase().size();
+            cantidadVariables += a1.getVariable().size();
+            cantidadComentarios += a1.getComentario().size();
+            cantidadMetodos += a1.getMetodo().size();
+        }
+        
+        for (Archivo a2: this.proyecto2.getArchivos()) {
+            cantidadClases += a2.getClase().size();
+            cantidadVariables += a2.getVariable().size();
+            cantidadComentarios += a2.getComentario().size();
+            cantidadMetodos += a2.getMetodo().size();
+        }
+        
+        
+        for (Archivo a1: this.proyecto1.getArchivos()) {
+            
+            for (Clase1 clase1 : a1.getClase()) {
+                puntajeClase += puntajeEspecifico(a1.getNombre(), "clase", clase1.getIdentificador());
+            }
+            
+            for (String variable1: a1.getVariable()) {
+                puntajeVariable += puntajeEspecifico(a1.getNombre(), "variable", variable1);
+            }
+            
+            for (String comentario1: a1.getComentario()) {
+                puntajeComentario += puntajeEspecifico(a1.getNombre(), "comentario", comentario1);
+            }
+            
+            for (Metodo metodo1: a1.getMetodo()) {
+                puntajeMetodo += puntajeEspecifico(a1.getNombre(), "metodo", metodo1.getIdentificador());
+            }
+        }
+        
+        if(cantidadClases != 0) {
+            puntaje += (puntajeClase/cantidadClases);
+        }
+        
+        if(cantidadVariables != 0) {
+            puntaje += (puntajeVariable/cantidadVariables);
+        }
+        
+        if(cantidadComentarios != 0) {
+            puntaje += (puntajeComentario/cantidadComentarios);
+        }
+        
+        if(cantidadMetodos != 0) {
+            puntaje += (puntajeMetodo/cantidadMetodos);
+        }
+        
+        return puntaje;
+    }
+    
+    public double puntajeEspecifico(String nombreArchivo, String valor, String identificador) {
+        double puntaje = 0;
+        Archivo archivo1 = new Archivo();
+        Archivo archivo2 = new Archivo();
+        Clase1 clase1 = new Clase1();
+        Clase1 clase2 = new Clase1();
+        Metodo metodo1 = new Metodo();
+        Metodo metodo2 = new Metodo();
+        boolean encontroVariable = false;
+        boolean encontroComentario = false;
+        boolean metodosIguales = false;
+        
+        valor = valor.replace("\"", "");
+        valor = valor.trim();
+        valor = valor.toLowerCase();
+        
+        
+        for (Archivo a1: this.proyecto1.getArchivos()) {
+            if(a1.getNombre() == nombreArchivo) {
+                archivo1 = a1;
+            }
+        }
+        
+        for (Archivo a2: this.proyecto2.getArchivos()) {
+            if(a2.getNombre() == nombreArchivo) {
+                archivo2 = a2;
+            }
+        }
+        
+        if(valor.equals("comentario")) {
+            for (String c1: archivo1.getComentario()) {
+                for (String c2: archivo2.getComentario()) {
+                    
+                    String tempCometario1 = c1.replace("/*", "");
+                    tempCometario1 = tempCometario1 .replace("*/", "");
+                    tempCometario1 = tempCometario1 .trim();
+                    
+                    String tempCometario2 = c2.replace("/*", "");
+                    tempCometario2 = tempCometario2.replace("*/", "");
+                    tempCometario2 = tempCometario2.trim();
+                    
+                    if(tempCometario1 == tempCometario2) {
+                        encontroComentario = true;
+                        break;
+                    }
+                }
+                
+            }
+        }
+        
+        
+        if(valor.equals("variable")) {
+            for (String v1: archivo1.getVariable()) {
+                for (String v2: archivo2.getVariable()) {
+                    if(v1 == v2) {
+                        encontroVariable = true;
+                        break;
+                    }
+                }
+                
+            }
+        }
+        
+        if(valor == "metodo") {
+            for (Metodo m1: archivo1.getMetodo()) {
+                if(m1.getIdentificador() == identificador) {
+                    metodo1 = m1;
+                }
+            }
+            
+            for (Metodo m2: archivo2.getMetodo()) {
+                if(m2.getIdentificador() == identificador) {
+                    metodo1 = m2;
+                }
+            }
+        }
+        
+        if(valor.equals("clase")) {
+            
+            int repitencia = 0;
+            for (Clase1 c1: archivo1.getClase()) {
+                if(c1.getIdentificador()== identificador) {
+                    clase1 = c1;
+                }
+            }
+
+            for (Clase1 c2: archivo2.getClase()) {
+                if(c2.getIdentificador()== identificador) {
+                    clase2 = c2;
+                }
+            }
+            
+            if(clase1.getMetodos().size() == clase2.getMetodos().size()) {
+                for(String m1 : clase1.getMetodos()) {
+                    for (String m2 : clase2.getMetodos()) {
+                        if(m1 == m2) {
+                            repitencia += 1;
+                        }
+                    }
+                }
+            }
+            
+            if(clase1.getMetodos().size() == repitencia) {
+                    metodosIguales = true;
+            }
+        }
+        
+        switch(valor) {
+            case "clase":
+                if(clase1.getIdentificador().equals(clase2.getIdentificador())) {
+                    puntaje += 0.2;
+                }
+                
+                if(clase1.getLineas() == clase2.getLineas()) {
+                    puntaje += 0.4;
+                }
+                
+                if(metodosIguales) {
+                    puntaje += 0.4;
+                }
+                break;
+            case "metodo":
+                if(metodo1.getIdentificador() == metodo2.getIdentificador()) {
+                    puntaje += 0.4;
+                }
+                
+                if(metodo1.getParamentros().size() == metodo2.getParamentros().size()) {
+                    puntaje += 0.3;
+                }
+                
+                if(metodo1.getLineas() == metodo2.getLineas()) {
+                    puntaje += 0.3;
+                }
+                break;
+            case "variable":
+                if(encontroVariable) {
+                    puntaje = 1;
+                }
+                break;
+            case "comentario":
+                if(encontroComentario) {
+                    puntaje = 1;
+                }
+                break;
+        }
+        
+        return puntaje;
+    }
+    
     private void analizadorSintatico(String texto, File file) {
         String tempText = texto.replace(",","#COMA8264#");
         tempText = tempText.replace("“", "\"");

@@ -29,6 +29,13 @@ import com.proyecto1.model.Clase1;
 import com.proyecto1.model.Metodo;
 import com.proyecto1.model.Proyecto;
 import com.proyecto1.model.ReporteToken;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -225,38 +232,27 @@ public class EditorTexto extends javax.swing.JFrame {
             txtSintatico.setForeground(Color.GREEN);
             txtSintatico.setText("ANALISIS SINTACTICO REALIZADO CORRECTAMENTE."); 
             analizadorSemantico();
+            generarGraficas();
         } catch (Exception ex) {
             Symbol sym = sintax.getSimbolo();     
             txtSintatico.setForeground(Color.RED);
-            txtSintatico.setText("ERROR SINTACTICO. LINEA: " + (sym.right + 1) + ", TEXTO: \"" + sym.value + "\"");
+            
+            if(sym != null) {
+                txtSintatico.setText("ERROR SINTACTICO. LINEA: " + (sym.right + 1) + ", TEXTO: \"" + sym.value + "\"");
+            }
+            
         }
        
     }
     
     private void analizadorSemantico() throws IOException {
         VariableController.getInstance().inicializarVariables();
-        
-        Proyecto proyecto = ProyectoController.getInstance().getProyecto1();
-        System.out.println("NOMBRE PROYECTO: " + proyecto.getDireccion());
-        
-        for (Archivo archivo : proyecto.getArchivos()) {
-            System.out.println("\tNOMBRE DE ARCHIVO: " + archivo.getNombre() + "\n");
-            for (Clase1 clase: archivo.getClase()) {
-                System.out.println("\tCLASE: " + clase.getIdentificador() + " LINEAS: " + clase.getLineas());
-                for (String metodo:clase.getMetodos()) {
-                    System.out.println("\t\tMETODO: " + metodo);
-                }
-            }
-            
-            System.out.println("");
-            for (Metodo metodo: archivo.getMetodo()) {
-                System.out.println("\tMETODO: " + metodo.getIdentificador() + " LINEAS: " + metodo.getLineas());
-                for (String parametos: metodo.getParamentros()) {
-                    System.out.println("\t\tPARAMETROS: " + parametos);
-                }
-            }
-           
-        }
+    }
+    
+    private void generarGraficas() throws IOException {
+        String infoGraficas = GraficaController.getInstance().infoGrafica();
+        txtLector.setText(infoGraficas);
+        GraficaController.getInstance().iniciarGraficas();
     }
     
     private void crearPestana() {
@@ -338,6 +334,11 @@ public class EditorTexto extends javax.swing.JFrame {
         btnArchivo.setMinimumSize(new java.awt.Dimension(150, 50));
         btnArchivo.setPreferredSize(new java.awt.Dimension(150, 50));
         btnArchivo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnArchivoActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnArchivo);
         jToolBar1.add(jSeparator7);
 
@@ -665,12 +666,48 @@ public class EditorTexto extends javax.swing.JFrame {
     }//GEN-LAST:event_btnReporteJsonActionPerformed
 
     private void btnReporteEstadisticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteEstadisticoActionPerformed
-        ProyectoController.getInstance().reporteTokens();
+        GraficaController.getInstance().reporteEstadistico();
     }//GEN-LAST:event_btnReporteEstadisticoActionPerformed
 
     private void btnReporteTokenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteTokenActionPerformed
         ProyectoController.getInstance().reporteTokens();
     }//GEN-LAST:event_btnReporteTokenActionPerformed
+
+    private void btnArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArchivoActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        FileFilter filter = new FileNameExtensionFilter("ARCHIVO .fca","fca");
+        fileChooser.setFileFilter(filter);
+        int seleccion = fileChooser.showOpenDialog(jPanel1);
+        if (seleccion == JFileChooser.APPROVE_OPTION)
+        {
+            String temp = "";
+            File fichero = fileChooser.getSelectedFile();
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(fichero.getAbsolutePath()));
+                String linea = "";
+        
+                while((linea = br.readLine()) != null) {
+                    temp += (linea + "\n");
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(EditorTexto.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(EditorTexto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
+            editor = new JTextArea();
+            editor.setText(temp);
+            panelEditor = new JScrollPane();
+
+            editor.setColumns(20);
+            editor.setRows(5);
+            panelEditor.setViewportView(editor);
+
+            jTabbedPane1.addTab("PESTAÑA " + idPestana, panelEditor);
+            idPestana++;
+
+        }
+    }//GEN-LAST:event_btnArchivoActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnArchivo;

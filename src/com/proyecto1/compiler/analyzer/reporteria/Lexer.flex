@@ -28,7 +28,7 @@ espacio = [ ,\t,\r]+
 ( "\n" ) {return Linea;}
 
 /* COMA */
-( "<COMA8264>" ) {lexeme=","; return Coma;}
+( "," ) {lexeme=","; return Coma;}
 
 /* TIPOS DE DATO STRING */
 ( [S|s][T|t][R|r][I|i][N|n][G|g] ) {lexeme=yytext(); return STRING;}

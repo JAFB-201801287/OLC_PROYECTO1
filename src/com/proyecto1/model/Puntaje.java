@@ -67,4 +67,6 @@ public class Puntaje {
     public void setIdentificador(String identificador) {
         this.identificador = identificador;
     }
+    
+    
 }

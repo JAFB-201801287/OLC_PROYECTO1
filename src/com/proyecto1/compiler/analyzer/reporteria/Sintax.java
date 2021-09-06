@@ -854,10 +854,13 @@ class CUP$Sintax$actions {
           case 43: // NT$8 ::= 
             {
               Object RESULT =null;
+		int nombreVariableleft = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).left;
+		int nombreVariableright = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).right;
+		String nombreVariable = (String)((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).value;
 		int pgleft = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-1)).left;
 		int pgright = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-1)).right;
 		Object pg = (Object)((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-1)).value;
- VariableController.getInstance().add(puntaje, pgright, pgleft); puntaje = null; 
+ VariableController.getInstance().add(puntaje, nombreVariable, pgright, pgleft); puntaje = null; 
               CUP$Sintax$result = parser.getSymbolFactory().newSymbol("NT$8",30, ((java_cup.runtime.Symbol)CUP$Sintax$stack.peek()), RESULT);
             }
           return CUP$Sintax$result;
@@ -868,6 +871,9 @@ class CUP$Sintax$actions {
               Object RESULT =null;
               // propagate RESULT from NT$8
                 RESULT = (Object) ((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-1)).value;
+		int nombreVariableleft = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-5)).left;
+		int nombreVariableright = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-5)).right;
+		String nombreVariable = (String)((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-5)).value;
 		int pgleft = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).left;
 		int pgright = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).right;
 		Object pg = (Object)((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).value;
@@ -880,10 +886,13 @@ class CUP$Sintax$actions {
           case 45: // NT$9 ::= 
             {
               Object RESULT =null;
+		int nombreVariableleft = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).left;
+		int nombreVariableright = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).right;
+		String nombreVariable = (String)((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).value;
 		int pgleft = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-1)).left;
 		int pgright = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-1)).right;
 		Object pg = (Object)((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-1)).value;
- VariableController.getInstance().add(puntaje, pgright, pgleft); puntaje = null; 
+ VariableController.getInstance().add(puntaje, nombreVariable, pgright, pgleft); puntaje = null; 
               CUP$Sintax$result = parser.getSymbolFactory().newSymbol("NT$9",31, ((java_cup.runtime.Symbol)CUP$Sintax$stack.peek()), RESULT);
             }
           return CUP$Sintax$result;
@@ -894,6 +903,9 @@ class CUP$Sintax$actions {
               Object RESULT =null;
               // propagate RESULT from NT$9
                 RESULT = (Object) ((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-1)).value;
+		int nombreVariableleft = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-5)).left;
+		int nombreVariableright = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-5)).right;
+		String nombreVariable = (String)((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-5)).value;
 		int pgleft = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).left;
 		int pgright = ((java_cup.runtime.Symbol)CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).right;
 		Object pg = (Object)((java_cup.runtime.Symbol) CUP$Sintax$stack.elementAt(CUP$Sintax$top-3)).value;

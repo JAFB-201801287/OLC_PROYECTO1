@@ -51,7 +51,7 @@ espacio=[ ,\t,\r,\n]+
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 
 // COMA
-( "#COMA8264#" ) { return new Symbol(sym.Coma, yychar, yyline, yytext()); }
+( "," ) { return new Symbol(sym.Coma, yychar, yyline, yytext()); }
 
 /* IGUAL */
 ( "=" ) { return new Symbol(sym.Igual, yychar, yyline, yytext()); }

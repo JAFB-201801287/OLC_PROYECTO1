@@ -9,6 +9,7 @@ import com.proyecto1.model.Puntaje;
 import com.proyecto1.model.Variable;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.text.Element;
 
 /**
  *
@@ -46,8 +47,8 @@ public class VariableController {
         lista.add(variable);
     }
     
-    public void add(Puntaje puntaje, int linea, int columna) {
-        Variable<String> variable = new Variable<String>("DOUBLE", puntaje, linea, columna);
+    public void add(Puntaje puntaje, String nombreVariable, int linea, int columna) {
+        Variable<String> variable = new Variable<String>("DOUBLE", puntaje, nombreVariable,linea, columna);
         lista.add(variable);
     }
 
@@ -68,5 +69,14 @@ public class VariableController {
     public void inicializarVariables() throws IOException {
         ProyectoController.getInstance().addProyecto1(this.rutaProyecto1);
         ProyectoController.getInstance().addProyecto2(this.rutaProyecto2);
+    }
+    
+    public Variable buscarVariable(String nombre) {
+        for (Variable variable : lista) {
+                if(variable.getNombreVariable().equals(nombre)) {
+                    return variable;
+            }
+        }
+        return null;
     }
 }

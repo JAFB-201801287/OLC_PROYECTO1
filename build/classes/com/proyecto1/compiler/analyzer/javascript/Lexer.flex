@@ -28,7 +28,7 @@ espacio = [ ,\t,\r]+
 ( "//"(.)* ) {/*Ignore*/}
 
 /* COMA */
-( "#COMA8264#" ) {lexeme=","; return Coma;}
+( "," ) {lexeme=","; return Coma;}
 
 /* IGUAL */
 ( "=" ) {lexeme=yytext(); return Igual;}
